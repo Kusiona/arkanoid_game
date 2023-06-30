@@ -1,0 +1,19 @@
+import pygame
+from pygame.surface import Surface
+from pygame.transform import scale
+
+
+class BackgroundLevelMenu(Surface):
+
+    def __init__(self, width, height):
+        super().__init__((width, height))
+        self.width = width
+        self.height = height
+        self.image = pygame.image.load('image/level_menu.jpg')
+
+    def create_back_image(self):
+        self.image = scale(self.image, (self.width, self.height))
+        self.blit(self.image, (0, 0))
+
+    def listen_events(self, event):
+        print(123)
