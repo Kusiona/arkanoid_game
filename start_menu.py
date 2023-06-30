@@ -107,6 +107,7 @@ class MainMenuSurface(Surface):
         super().__init__((width, height))
         self.width = width
         self.height = height
+        # todo background -> background_image
         self.background = background
         self.main_menu = MainMenuInterface(width=background.width, height=background.height)
 
