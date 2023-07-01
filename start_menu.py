@@ -6,7 +6,8 @@ from pygame.sprite import Sprite
 from pygame.surface import Surface
 from pygame.transform import scale
 
-
+# todo класс Sprite для корректной работы должен всегда содержать аттрибуты image и rect
+#  они должны обьявляться в __init__
 class BackgroundImage(Sprite):
 
     def __init__(self, time_interval):
@@ -23,6 +24,8 @@ class BackgroundImage(Sprite):
     def update(self, seconds):
 
         self.timer += seconds
+        # todo 164 это константа и должна обьявляться 1 раз в одном месте
+        #  или определяться по количеству картинок, но не хардкодиться в разных местах
         if self.index == 164:
             self.index = 0
         if self.timer >= self.time_interval:
@@ -36,6 +39,7 @@ class BackgroundImage(Sprite):
 
 class MainMenuInterface(Surface):
     TEXT = 'ARKANOID'
+    # todo непонятно зачем здесь все это на уровне класса обьявляется
     main_text = ''
     text_shadow = ''
     text_x = 0
@@ -57,15 +61,22 @@ class MainMenuInterface(Surface):
         self.main_text = font.render(self.TEXT, True, (25, 25, 112))
         self.text_shadow = font.render(self.TEXT, True, (128, 0, 128))
         text_width, text_height = font.size(self.TEXT)
+        # todo зачем эти аттрибуты назначаются экземпляру, если нигде потом не используются?
         self.text_x = (self.width - text_width) / 2
         self.text_y = ((self.height / 2) - text_height) / 2
 
+
+    # todo create_play_button и create_exit_button практически полностью копипаст
     def create_play_button(self, text):
+        # todo имеет смысл выносить отдельно в переменные только что-то крупное
+        #  или что-то что будет использовано несколько раз
+        # screen action text text_size сразу передавать в аргументы
         screen = self
         action = text
         text = text
         font = pygame.font.Font('fonts/InvasionBold.ttf', 100)
         text_size = font.size(text)
+        # todo зачем эти аттрибуты назначаются экземпляру, если нигде потом не используются?
         self.text_x = (self.width - text_size[0]) / 2
         self.text_y = self.height - (self.height / 2)
 
@@ -76,7 +87,9 @@ class MainMenuInterface(Surface):
                                   text_x=self.text_x,
                                   text_y=self.text_y,
                                   action=action)
+        # todo то что делается всегда при создании экземпляра надо дергать из инита класса этого экзмепляра
         self.play_button.create()
+        # todo зачем эти аттрибуты назначаются экземпляру, если нигде потом не используются?
         self.play_text = self.play_button.button_text
         self.play_text_shadow = self.play_button.button_text_shadow
 

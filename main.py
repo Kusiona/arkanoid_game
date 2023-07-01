@@ -27,6 +27,8 @@ class Arkanoid:
             self.WIDTH = self.screen.get_width()
             self.HEIGHT = self.screen.get_height()
 
+            # todo MainMenuSurface и BackgroundLevelMenu должны создаваться один раз
+            #  и просто лепиться на каждой итерации цикла. Не надо их создавать на каждой итерации
             if background_menu:
                 # todo screen -> current_screen
                 screen = MainMenuSurface(width=self.WIDTH, height=self.HEIGHT, background=background)
@@ -39,6 +41,8 @@ class Arkanoid:
                 screen.create_back_image()
                 self.screen.blit(screen, (0, 0))
 
+            # todo либо/либо не вместе
+            # todo update нужен для обновления переданной части экрана
             pygame.display.update()
             pygame.display.flip()
 
@@ -56,6 +60,9 @@ class Arkanoid:
 # todo подумать как все таки иметь на уровне экземпляра один единственный рабочий screen
 #  а не в виде какой-то локально переменной в функции
 # todo для текста сделать отдельный класс унаследованный от библиотечного текста, внутри которого будет реализовываться смещение
+# todo спроектировать грамотный принцип работы главного класса игры с рабочими экранами
+# todo спроектировать грамотный принцип работы всех поверхностей и интерактивных элементов на экране с ивентами
+# todo директория image содержит более одного изображения, учесть в нейминге
 if __name__ == '__main__':
     pygame.init()
     Arkanoid().run_game_loop()
