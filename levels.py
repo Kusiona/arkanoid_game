@@ -1,6 +1,7 @@
 import pygame
 from pygame.surface import Surface
 from pygame.sprite import Sprite
+from processing_image import Image
 
 
 class Level(Surface):
@@ -22,28 +23,22 @@ class LevelSurface(Surface):
         self.height = height
         self.fps = fps
         self.clock = clock
+        self.icon_x = None
+        self.icon_y = None
+        self.level_icon = None
 
-    def create_level_icon(self, main_surface):
-        pass
-        # self.width = self.width / 10
-        # self.height = self.height / 10
-        # icon_level = BackgroundLevelImage(width=self.width, height=self.height)
-        # icon_level.create_icon()
-        # main_surface.blit(icon_level.image, (0, 0))
+    def get_level_icon(self, main_surface):
+        self.icon_x = self.width / 7
+        self.icon_y = self.height / 4
+        self.level_icon = Image(width=self.width, height=self.height)
+        self.level_icon.create_lvl_icon(width=self.width, height=self.height)
+        main_surface.blit(self.level_icon.image, (self.icon_x, self.icon_y))
 
     def handle_event(self, event):
         pass
+        # if self.level_icon.image.collidepoint(event.pos):
 
 
-class BackgroundLevelImage(Sprite):
+# # todo сделать окантовку вокруг иконки уровня
+# # todo объединить создание иконок в группу, чтобы рендерить группу, а не каждую иконку в отдельности
 
-    def __init__(self, width, height):
-        super().__init__()
-        self.image = pygame.image.load('images/image_level/sun.png')
-        self.rect = self.image.get_rect()
-        self.width = width
-        self.height = height
-
-    def create_icon(self):
-        self.width = self.width / 10
-        self.height = self.height / 10

@@ -1,7 +1,8 @@
 import pygame
 import sys
-from main_menu import BackgroundImage, MainMenuSurface
-from level_menu import LevelMenuSurface
+from processing_image import Image
+from main_menu import MainMenu
+from level_menu import LevelMenu
 from buttons import Button
 
 # todo MainMenuSurface и BackgroundLevelMenu должны создаваться один раз
@@ -18,9 +19,9 @@ class Arkanoid:
         self.game = True
         self.screen_number = '1'
         self.current_screen = None
-        self.background = BackgroundImage(time_interval=0.25, width=self.WIDTH, height=self.HEIGHT)
+        self.background = Image(time_interval=0.25, width=self.WIDTH, height=self.HEIGHT)
         pygame.display.set_caption('Arcanoid')
-        pygame.display.set_icon(pygame.image.load('image_icon/image_icon.png'))
+        pygame.display.set_icon(pygame.image.load('image_main_icon/image_icon.png'))
 
     def run_game_loop(self):
 
@@ -38,19 +39,21 @@ class Arkanoid:
                 elif event.type == pygame.QUIT:
                     Button(text_size=(self.WIDTH, self.HEIGHT)).exit()
 
+    def create(self, surface):
+        self.current_screen = surface
+        self.current_screen.interface.build_interface(clock=self.clock, fps=self.FPS, background_image=self.background)
+        self.screen.blit(self.current_screen, (0, 0))
+
     def update(self, screen_number):
         surface = None
         if screen_number == '1':
-            surface = MainMenuSurface(width=self.WIDTH, height=self.HEIGHT, background=self.background)
+            surface = MainMenu(width=self.WIDTH, height=self.HEIGHT)
         if screen_number == '2':
-            surface = LevelMenuSurface(width=self.WIDTH, height=self.HEIGHT)
+            surface = LevelMenu(width=self.WIDTH, height=self.HEIGHT)
 
         self.create(surface=surface)
 
-    def create(self, surface):
-        self.current_screen = surface
-        self.current_screen.collect_menu(clock=self.clock, fps=self.FPS)
-        self.screen.blit(self.current_screen, (0, 0))
+
 
 
 # todo подумать как все таки иметь на уровне экземпляра один единственный рабочий screen
