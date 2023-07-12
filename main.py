@@ -26,9 +26,12 @@ class Arkanoid:
     def run_game_loop(self):
 
         while self.game:
-            self.WIDTH = self.screen.get_width()
-            self.HEIGHT = self.screen.get_height()
-
+            if self.screen.get_width() > 800 or self.screen.get_height() > 600:
+                self.WIDTH = self.screen.get_width()
+                self.HEIGHT = self.screen.get_height()
+            else:
+                self.WIDTH = 800
+                self.HEIGHT = 600
             self.update(self.screen_number)
 
             pygame.display.update()
@@ -52,7 +55,6 @@ class Arkanoid:
             surface = LevelMenu(width=self.WIDTH, height=self.HEIGHT)
 
         self.create(surface=surface)
-
 
 
 

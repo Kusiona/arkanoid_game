@@ -14,7 +14,7 @@ class BaseInterface:
         self.text_shadow = None
         self.text_x = None
         self.text_y = None
-        self.play_button = None
+        self.lvl_menu_button = None
         self.exit_button = None
 
     def create_background_image(self, clock, fps, background_image):
@@ -37,8 +37,8 @@ class BaseInterface:
         button = Button(text_size=text_size, text_x=self.text_x, text_y=self.text_y)
         button.create(screen=self, text=text, font=pygame.font.Font(self.FONT, size), action=text)
 
-        if text == 'PLAY':
-            self.play_button = button
+        if text == 'CHOOSE LEVEL':
+            self.lvl_menu_button = button
         elif text == 'EXIT' or text == 'BACK':
             self.exit_button = button
         self.main_text = button.button_text
@@ -67,13 +67,17 @@ class MainMenuInterface(BaseInterface):
         self.main_surface.blit(self.main_text, (self.text_x, self.text_y))
         self.main_surface.blit(self.text_shadow, (self.text_x + 5, self.text_y + 5))
 
-        self.create_buttons(text='PLAY', size=100, coefficient=2)
+        self.create_buttons(text='PLAY COMPANY', size=70, coefficient=2)
         self.main_surface.blit(self.main_text, (self.text_x, self.text_y))
-        self.main_surface.blit(self.text_shadow, (self.text_x + 4, self.text_y + 4))
+        self.main_surface.blit(self.text_shadow, (self.text_x + 3, self.text_y + 3))
 
-        self.create_buttons(text='EXIT', size=100, coefficient=4)
+        self.create_buttons(text='CHOOSE LEVEL', size=70, coefficient=3)
         self.main_surface.blit(self.main_text, (self.text_x, self.text_y))
-        self.main_surface.blit(self.text_shadow, (self.text_x + 4, self.text_y + 4))
+        self.main_surface.blit(self.text_shadow, (self.text_x + 3, self.text_y + 3))
+
+        self.create_buttons(text='EXIT', size=70, coefficient=6)
+        self.main_surface.blit(self.main_text, (self.text_x, self.text_y))
+        self.main_surface.blit(self.text_shadow, (self.text_x + 3, self.text_y + 3))
 
 
 class MainMenu(Surface):
@@ -84,7 +88,7 @@ class MainMenu(Surface):
         self.interface = MainMenuInterface(main_surface=self, width=width, height=height)
 
     def handle_event(self, event):
-        if self.interface.play_button.collidepoint(event.pos):
+        if self.interface.lvl_menu_button.collidepoint(event.pos):
             return '2'
         elif self.interface.exit_button.collidepoint(event.pos):
             self.interface.exit_button.exit()

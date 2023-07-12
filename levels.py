@@ -1,6 +1,8 @@
 import pygame
+from pygame import image
+
 from pygame.surface import Surface
-from pygame.sprite import Sprite
+from pygame.sprite import Sprite, Group
 from processing_image import Image
 
 
@@ -23,20 +25,10 @@ class LevelSurface(Surface):
         self.height = height
         self.fps = fps
         self.clock = clock
-        self.icon_x = None
-        self.icon_y = None
-        self.level_icon = None
-
-    def get_level_icon(self, main_surface):
-        self.icon_x = self.width / 7
-        self.icon_y = self.height / 4
-        self.level_icon = Image(width=self.width, height=self.height)
-        self.level_icon.create_lvl_icon(width=self.width, height=self.height)
-        main_surface.blit(self.level_icon.image, (self.icon_x, self.icon_y))
+        self.level_images = [image.load(f'images/images_level/{i}.jpg') for i in range(1, 10)]
 
     def handle_event(self, event):
         pass
-        # if self.level_icon.image.collidepoint(event.pos):
 
 
 # # todo сделать окантовку вокруг иконки уровня
