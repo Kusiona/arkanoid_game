@@ -1,9 +1,9 @@
 import pygame
-import sys
 from processing_image import Image
 from main_menu import MainMenu
 from level_menu import LevelMenu
 from buttons import Button
+from levels import LevelSurface
 
 # todo MainMenuSurface и BackgroundLevelMenu должны создаваться один раз
 #  и просто лепиться на каждой итерации цикла. Не надо их создавать на каждой итерации
@@ -37,7 +37,7 @@ class Arkanoid:
             pygame.display.update()
 
             for event in pygame.event.get():
-                if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     self.screen_number = self.current_screen.handle_event(event)
                 elif event.type == pygame.QUIT:
                     Button(text_size=(self.WIDTH, self.HEIGHT)).exit()
@@ -47,16 +47,16 @@ class Arkanoid:
         self.current_screen.interface.build_interface(clock=self.clock, fps=self.FPS, background_image=self.background)
         self.screen.blit(self.current_screen, (0, 0))
 
-    def update(self, screen_number):
+    def update(self, screen_info):
         surface = None
-        if screen_number == '1':
+        if screen_info[0] == '1':
             surface = MainMenu(width=self.WIDTH, height=self.HEIGHT)
-        if screen_number == '2':
+        if screen_info[0] == '2':
             surface = LevelMenu(width=self.WIDTH, height=self.HEIGHT)
+        if screen_info[0] == '3':
+            surface = LevelSurface(width=self.WIDTH, height=self.HEIGHT, level_number=screen_info[1])
 
         self.create(surface=surface)
-
-
 
 # todo подумать как все таки иметь на уровне экземпляра один единственный рабочий screen
 #  а не в виде какой-то локально переменной в функции

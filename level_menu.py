@@ -54,8 +54,9 @@ class LevelMenu(Surface):
 
     def handle_event(self, event):
         if self.interface.exit_button.collidepoint(event.pos):
-            return '1'
-        # todo к каждой иконке привязать rect для прослушки событий, флаги?
-        # if self.interface.image.rect.collidepoint(event.pos):
-        #     print('тыкнул по иконке')
-        return '2'
+            return ('1', None)
+        else:
+            for item in self.interface.icon_group:
+                if item.rect.collidepoint(event.pos):
+                    return ('3', item.index)
+        return ('2', None)

@@ -1,36 +1,67 @@
-import pygame
 from pygame import image
-
 from pygame.surface import Surface
-from pygame.sprite import Sprite, Group
-from processing_image import Image
+import pygame
+from pygame.sprite import Sprite
 
 
-class Level(Surface):
+class Level(Sprite):
 
-    def __init__(self, width, height):
-        super().__init__((width, height))
+    def __init__(self, width, height, main_surface, lvl_bg_img):
+        super().__init__()
         self.width = width
         self.height = height
+        self.main_surface = main_surface
+        self.image = lvl_bg_img
+        self.rect = self.image.get_rect()
+        self.platform = None
 
-    def collect_level(self, clock, fps, main_surface):
+    def build_interface(self, clock, fps, background_image):
+        self.image = pygame.transform.scale(self.image, (self.width, self.height))
+        self.main_surface.blit(self.image, (0, 0))
+
+        self.platform = Platform(width=self.width, height=self.height)
+        self.main_surface.blit(self.platform.image, self.platform.rect)
+
+    def update(self):
         pass
 
 
-# todo продумать, как привязать к уровню определенную картинку и вставлять ее в список на экран меню
 class LevelSurface(Surface):
-    def __init__(self, width, height, clock, fps):
+    interface = Level
+
+    def __init__(self, width, height, level_number):
         super().__init__((width, height))
         self.width = width
         self.height = height
-        self.fps = fps
-        self.clock = clock
         self.level_images = [image.load(f'images/images_level/{i}.jpg') for i in range(1, 10)]
+        self.image = self.level_images[level_number]
+        self.interface = Level(width=self.width, height=self.height, main_surface=self, lvl_bg_img=self.image)
+        self.image.set_alpha(180)
 
     def handle_event(self, event):
+        # todo отлавливать события в главном цикле и передавать сюда
+        return ('2', None)
+
+
+class Platform(Sprite):
+
+    def __init__(self, width, height):
+        super().__init__()
+        self.width = width / 4
+        self.height = height / 20
+        self.x_coord = width / 2
+        self.y_coord = height - (height / 8)
+        self.spawn_coords = (self.x_coord, self.y_coord)
+        self.image = pygame.transform.scale(pygame.image.load('images/images_elements/platform.png'), (self.width, self.height))
+        self.rect = self.image.get_rect(topleft=self.spawn_coords)
+
+    def movement(self):
         pass
 
 
-# # todo сделать окантовку вокруг иконки уровня
-# # todo объединить создание иконок в группу, чтобы рендерить группу, а не каждую иконку в отдельности
+class Block:
+    pass
 
+
+class Ball:
+    pass

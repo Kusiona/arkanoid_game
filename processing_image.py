@@ -2,7 +2,6 @@ from pygame import image
 import pygame
 from pygame.sprite import Sprite, Group
 from pygame.transform import scale
-from pygame.rect import Rect
 
 
 class Image(Sprite):
@@ -66,35 +65,14 @@ class LevelIcon(Sprite):
         self.image.blit(self.icon, (5, 5))
 
     def create_coords(self, icon_width, icon_height):
-        indent_edge_x = (self.width - icon_width * 3.4) / 2
-        indent_edge_y = (self.height - icon_height * 3 - icon_height / 2) / 2
-        indent_icon_x = (self.width - indent_edge_x * 2) / 18
-        indent_icon_y = (self.height - indent_icon_x * 2) / 18
-#todo необходимо выявить обую закономерность и свести if к минимуму
-        if self.index == 0:
-            self.icon_x = indent_edge_x
-            self.icon_y = indent_edge_y
-        elif self.index == 1:
-            self.icon_x = indent_edge_x + icon_width + indent_icon_x
-            self.icon_y = indent_edge_y
-        elif self.index == 2:
-            self.icon_x = indent_edge_x + icon_width*2 + indent_icon_x*2
-            self.icon_y = indent_edge_y
-        elif self.index == 3:
-            self.icon_x = indent_edge_x
-            self.icon_y = indent_edge_y + icon_height + indent_icon_y
-        elif self.index == 4:
-            self.icon_x = indent_edge_x + icon_width + indent_icon_x
-            self.icon_y = indent_edge_y + icon_height + indent_icon_y
-        elif self.index == 5:
-            self.icon_x = indent_edge_x + icon_width*2 + indent_icon_x*2
-            self.icon_y = indent_edge_y + icon_height + indent_icon_y
-        elif self.index == 6:
-            self.icon_x = indent_edge_x
-            self.icon_y = indent_edge_y + icon_height*2 + indent_icon_y*2
-        elif self.index == 7:
-            self.icon_x = indent_edge_x + icon_width + indent_icon_x
-            self.icon_y = indent_edge_y + icon_height*2 + indent_icon_y*2
-        elif self.index == 8:
-            self.icon_x = indent_edge_x + icon_width*2 + indent_icon_x*2
-            self.icon_y = indent_edge_y + icon_height*2 + indent_icon_y*2
+        interval = icon_width / 6
+        start_coord_x = (self.width - (icon_width * 3 + interval * 2)) / 2
+        start_coord_y = (self.height - (icon_height * 3 + interval * 2)) / 2
+        self.icon_x = start_coord_x
+        self.icon_y = start_coord_y
+        if self.index % 3:
+            self.icon_x += icon_width * (self.index % 3) + interval * (self.index % 3)
+            if self.index != 2 and self.index != 1:
+                self.icon_y += icon_height * (self.index // 3) + interval * (self.index // 3)
+        elif not self.index % 3:
+            self.icon_y += icon_height * (self.index // 3) + interval * (self.index // 3)
