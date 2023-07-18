@@ -1,12 +1,15 @@
 import pygame
 from buttons import Button
 from pygame.surface import Surface
+from processing_image import Image
+from pygame.time import Clock
+from pygame.event import Event
 
 
 class BaseInterface:
     FONT = 'fonts/InvasionBold.ttf'
 
-    def __init__(self, width, height, main_surface):
+    def __init__(self, width: int, height: int, main_surface):
         self.main_surface = main_surface
         self.width = width
         self.height = height
@@ -17,10 +20,10 @@ class BaseInterface:
         self.lvl_menu_button = None
         self.exit_button = None
 
-    def create_background_image(self, clock, fps, background_image):
+    def create_background_image(self, clock, fps, background_image) -> None:
         pass
 
-    def create_text(self, text, size, coefficient):
+    def create_text(self, text: str, size: int, coefficient: int) -> None:
         font = pygame.font.Font(self.FONT, size)
         self.main_text = font.render(text, True, (25, 25, 112))
         self.text_shadow = font.render(text, True, (128, 0, 128))
@@ -28,7 +31,7 @@ class BaseInterface:
         self.text_x = (self.width - text_width) / 2
         self.text_y = ((self.height / 2) - text_height) / coefficient
 
-    def create_buttons(self,  text, size, coefficient):
+    def create_buttons(self,  text: str, size: int, coefficient: int) -> None:
         font = pygame.font.Font(self.FONT, size)
         text_size = font.size(text)
         self.text_x = (self.width - text_size[0]) / 2
@@ -44,22 +47,22 @@ class BaseInterface:
         self.main_text = button.button_text
         self.text_shadow = button.button_text_shadow
 
-    def build_interface(self, clock, fps, background_image):
+    def build_interface(self, clock: Clock, fps: int, background_image: Image) -> None:
         pass
 
 
 class MainMenuInterface(BaseInterface):
 
-    def __init__(self, width, height, main_surface):
+    def __init__(self, width: int, height: int, main_surface):
         super().__init__(width=width, height=height, main_surface=main_surface)
         self.surface = main_surface
 
-    def create_background_image(self, clock, fps, background_image):
+    def create_background_image(self, clock: Clock, fps: int, background_image: Image) -> None:
         seconds = clock.tick(fps) / 300.0
         background_image.update(seconds)
         self.main_surface.blit(background_image.image, (0, 0))
 
-    def build_interface(self, clock, fps, background_image):
+    def build_interface(self, clock: Clock, fps: int, background_image: Image) -> None:
         self.create_text(text='ARKANOID', coefficient=2, size=130)
 
         self.create_background_image(clock=clock, fps=fps, background_image=background_image)
@@ -83,13 +86,13 @@ class MainMenuInterface(BaseInterface):
 class MainMenu(Surface):
     interface = MainMenuInterface
 
-    def __init__(self, width, height):
+    def __init__(self, width: int, height: int):
         super().__init__((width, height))
         self.interface = MainMenuInterface(main_surface=self, width=width, height=height)
 
-    def handle_event(self, event):
+    def handle_event(self, event: Event) -> tuple[str, int]:
         if self.interface.lvl_menu_button.collidepoint(event.pos):
-            return '2'
+            return '2', 0
         elif self.interface.exit_button.collidepoint(event.pos):
             self.interface.exit_button.exit()
-        return '1'
+        return '1', 0

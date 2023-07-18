@@ -2,11 +2,12 @@ from pygame import image
 import pygame
 from pygame.sprite import Sprite, Group
 from pygame.transform import scale
+from pygame.surface import Surface
 
 
 class Image(Sprite):
 
-    def __init__(self, time_interval=None, width=None, height=None):
+    def __init__(self, time_interval: float = None, width: int = None, height: int = None):
         super().__init__()
         self.images = [image.load(f'main_menu_animation_images/{i}.gif') for i in range(0, 164)]
         self.index = 0
@@ -17,7 +18,7 @@ class Image(Sprite):
         self.time_interval = time_interval
         self.timer = 0
 
-    def update(self, seconds):
+    def update(self, seconds: float) -> None:
         self.width = pygame.display.get_surface().get_width()
         self.height = pygame.display.get_surface().get_height()
 
@@ -33,16 +34,16 @@ class Image(Sprite):
             self.timer = 0
         self.index += 1
 
-    def create_lvl_menu_bg_img(self):
+    def create_lvl_menu_bg_img(self) -> None:
         self.image = image.load('images/level_menu.jpg')
 
-    def create_lvl_bg_img(self):
+    def create_lvl_bg_img(self) -> None:
         pass
 
 
 class LevelIcon(Sprite):
 
-    def __init__(self, width, height, index, icon):
+    def __init__(self, width: int, height: int, index: int, icon: Surface):
         super().__init__()
         self.index = index
         self.icon = icon
@@ -54,7 +55,7 @@ class LevelIcon(Sprite):
         self.icon_x = 0
         self.icon_y = 0
 
-    def update(self, seconds=None):
+    def update(self, seconds: float = None) -> None:
         width = int(self.width / 5)
         height = int(self.height / 5)
         self.icon = pygame.transform.scale(self.icon, (width, height))
@@ -64,7 +65,7 @@ class LevelIcon(Sprite):
         self.image.fill((128, 0, 128))
         self.image.blit(self.icon, (5, 5))
 
-    def create_coords(self, icon_width, icon_height):
+    def create_coords(self, icon_width: int, icon_height: int) -> None:
         interval = icon_width / 6
         start_coord_x = (self.width - (icon_width * 3 + interval * 2)) / 2
         start_coord_y = (self.height - (icon_height * 3 + interval * 2)) / 2
