@@ -54,6 +54,9 @@ class LevelIcon(Sprite):
         self.height = height
         self.icon_x = 0
         self.icon_y = 0
+        # to prevent circular import
+        from levels import LevelSurface
+        self.next_screen = LevelSurface
 
     def update(self, seconds: float = None) -> None:
         width = int(self.width / 5)

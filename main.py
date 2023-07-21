@@ -18,7 +18,7 @@ class Arkanoid:
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.RESIZABLE)
         self.clock = pygame.time.Clock()
         self.game = True
-        self.screen_info = ('1', None)
+        # self.current_screen = MainMenu(width=self.WIDTH, height=self.HEIGHT, main_app_class=self)
         self.current_screen = None
         self.background = Image(time_interval=0.25, width=self.WIDTH, height=self.HEIGHT)
         pygame.display.set_caption('Arcanoid')
@@ -33,20 +33,26 @@ class Arkanoid:
         self.ball_movement = False
 
     def run_game_loop(self) -> None:
+
         while self.game:
             event = None
             for event in pygame.event.get():
+                if event.type == pygame.WINDOWRESIZED:
+                    self.current_screen.width = event.x
+                    self.current_screen.height = event.y
+                    self.current_screen.initialize()
 
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                    self.screen_info = self.current_screen.handle_event(event)
-                elif event.type == pygame.KEYDOWN and self.screen_info[0] == '3':
+                    self.current_screen.handle_event(event)
+
+                elif event.type == pygame.KEYDOWN and self.current_screen.get_name() == 'LevelSurface':
 
                     if event.key == pygame.K_LEFT:
                         self.platform_move_left = True
                     elif event.key == pygame.K_RIGHT:
                         self.platform_move_right = True
 
-                elif event.type == pygame.KEYUP and self.screen_info[0] == '3':
+                elif event.type == pygame.KEYUP and self.current_screen.get_name() == 'LevelSurface':
 
                     if event.key == pygame.K_LEFT:
                         self.platform_move_left = False
@@ -59,14 +65,14 @@ class Arkanoid:
                     Button(text_size=(self.WIDTH, self.HEIGHT)).exit()
 
             if self.platform_move_left:
-                self.screen_info = self.current_screen.handle_event(event)
+                self.current_screen.handle_event(event)
             elif self.platform_move_right:
-                self.screen_info = self.current_screen.handle_event(event)
+                self.current_screen.handle_event(event)
 
             self.WIDTH = self.screen.get_width()
             self.HEIGHT = self.screen.get_height()
 
-            self.update(self.screen_info)
+            self.update()
 
             pygame.display.update()
 
@@ -77,17 +83,11 @@ class Arkanoid:
         )
         self.screen.blit(self.current_screen, (0, 0))
 
-    def update(self, screen_info) -> None:
-        if screen_info[0] == '1':
-            self.current_screen = MainMenu(width=self.WIDTH, height=self.HEIGHT)
-        if screen_info[0] == '2':
-            self.current_screen = LevelMenu(width=self.WIDTH, height=self.HEIGHT)
-        if screen_info[0] == '3':
-            self.current_screen = LevelSurface(
-                width=self.WIDTH, height=self.HEIGHT,
-                level_number=screen_info[1], main_app_class=self
-            )
-
+    def update(self) -> None:
+        if not self.current_screen or self.current_screen.get_name() == 'MainMenu':
+            self.current_screen = MainMenu(width=self.WIDTH, height=self.HEIGHT, main_app_class=self)
+        # else:
+        #     self.current_screen(width=self.WIDTH, height=self.HEIGHT, main_app_class=self)
         self.create()
 
 # todo подумать как все таки иметь на уровне экземпляра один единственный рабочий screen
