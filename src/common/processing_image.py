@@ -55,7 +55,7 @@ class LevelIcon(Sprite):
         self.icon_x = 0
         self.icon_y = 0
         # to prevent circular import
-        from levels import LevelSurface
+        from src.game_screens.levels import LevelSurface
         self.next_screen = LevelSurface
 
     def update(self, seconds: float = None) -> None:

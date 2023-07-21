@@ -3,7 +3,7 @@ from pygame.surface import Surface
 import pygame
 from pygame.sprite import Sprite
 from pygame.transform import scale
-from processing_image import Image
+from src.common.processing_image import Image
 from pygame.time import Clock
 from pygame.event import Event
 
@@ -71,7 +71,7 @@ class LevelSurface(Surface):
 
 
 class Platform(Sprite):
-    IMAGE_PATH = 'images/images_elements/platform.png'
+    IMAGE_PATH = 'static/images/images_elements/platform.png'
 
     def __init__(self, width: int, height: int, main_app_class):
         super().__init__()
@@ -96,7 +96,7 @@ class Platform(Sprite):
 
 
 class Ball(Sprite):
-    IMAGE_PATH = 'images/images_elements/ball.png'
+    IMAGE_PATH = 'static/images/images_elements/ball.png'
 
     def __init__(self, width: int, height: int, main_app_class, coord_platform: float):
         super().__init__()

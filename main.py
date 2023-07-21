@@ -1,9 +1,8 @@
 import pygame
-from processing_image import Image
-from main_menu import MainMenu
-from level_menu import LevelMenu
-from buttons import Button
-from levels import LevelSurface
+from src.common.processing_image import Image
+from src.game_screens.main_menu import MainMenu
+from src.common.buttons import Button
+
 
 # todo MainMenuSurface и BackgroundLevelMenu должны создаваться один раз
 #  и просто лепиться на каждой итерации цикла. Не надо их создавать на каждой итерации
@@ -21,7 +20,7 @@ class Arkanoid:
         # self.current_screen = MainMenu(width=self.WIDTH, height=self.HEIGHT, main_app_class=self)
         self.current_screen = None
         self.background = Image(time_interval=0.25, width=self.WIDTH, height=self.HEIGHT)
-        pygame.display.set_caption('Arcanoid')
+        pygame.display.set_caption('Arkanoid')
         pygame.display.set_icon(pygame.image.load('image_main_icon/image_icon.png'))
 
         # platform movement
@@ -73,7 +72,6 @@ class Arkanoid:
             self.HEIGHT = self.screen.get_height()
 
             self.update()
-
             pygame.display.update()
 
     def create(self) -> None:

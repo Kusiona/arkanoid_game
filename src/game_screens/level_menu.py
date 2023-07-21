@@ -3,7 +3,7 @@ from pygame.transform import scale
 from pygame import image
 from main_menu import BaseInterface
 from pygame.sprite import Group
-from processing_image import Image, LevelIcon
+from src.common.processing_image import Image, LevelIcon
 from pygame.time import Clock
 from pygame.event import Event
 

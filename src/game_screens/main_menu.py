@@ -1,7 +1,7 @@
 import pygame
-from buttons import Button
+from src.common.buttons import Button
 from pygame.surface import Surface
-from processing_image import Image
+from src.common.processing_image import Image
 from pygame.time import Clock
 from pygame.event import Event
 
@@ -75,7 +75,7 @@ class MainMenuInterface(BaseInterface):
         self.main_surface.blit(self.main_text, (self.text_x, self.text_y))
         self.main_surface.blit(self.text_shadow, (self.text_x + 3, self.text_y + 3))
         # to prevent circular import
-        from level_menu import LevelMenu
+        from src.game_screens.level_menu import LevelMenu
         self.create_buttons(text='CHOOSE LEVEL', size=70, coefficient=3,
                             next_screen=LevelMenu)
 
