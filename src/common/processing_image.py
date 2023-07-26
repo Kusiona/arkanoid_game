@@ -9,7 +9,7 @@ class Image(Sprite):
 
     def __init__(self, time_interval: float = None, width: int = None, height: int = None):
         super().__init__()
-        self.images = [image.load(f'main_menu_animation_images/{i}.gif') for i in range(0, 164)]
+        self.images = [image.load(f'static/images/main_menu_animation/{i}.gif') for i in range(0, 164)]
         self.index = 0
         self.image = self.images[self.index]
         self.rect = self.image.get_rect()
@@ -35,7 +35,7 @@ class Image(Sprite):
         self.index += 1
 
     def create_lvl_menu_bg_img(self) -> None:
-        self.image = image.load('images/level_menu.jpg')
+        self.image = image.load('static/images/level_menu_bg.jpg')
 
     def create_lvl_bg_img(self) -> None:
         pass

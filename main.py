@@ -21,7 +21,7 @@ class Arkanoid:
         self.current_screen = None
         self.background = Image(time_interval=0.25, width=self.WIDTH, height=self.HEIGHT)
         pygame.display.set_caption('Arkanoid')
-        pygame.display.set_icon(pygame.image.load('image_main_icon/image_icon.png'))
+        pygame.display.set_icon(pygame.image.load('static/images/game_window_icon.png'))
 
         # platform movement
         self.platform_offset = 0
@@ -36,10 +36,11 @@ class Arkanoid:
         while self.game:
             event = None
             for event in pygame.event.get():
+                print(event)
                 if event.type == pygame.WINDOWRESIZED:
                     self.current_screen.width = event.x
                     self.current_screen.height = event.y
-                    self.current_screen.initialize()
+                    # self.current_screen.initialize()
 
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     self.current_screen.handle_event(event)

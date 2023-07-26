@@ -1,7 +1,7 @@
 from pygame.surface import Surface
 from pygame.transform import scale
 from pygame import image
-from main_menu import BaseInterface
+from src.game_screens.main_menu import BaseInterface
 from pygame.sprite import Group
 from src.common.processing_image import Image, LevelIcon
 from pygame.time import Clock
@@ -18,7 +18,7 @@ class LevelMenuInterface(BaseInterface):
         self.bg_image = None
         self.level_surface = None
         self.icon_group = Group()
-        self.level_bg_images = [image.load(f'images/images_level/{i}.jpg') for i in range(1, 10)]
+        self.level_bg_images = [image.load(f'static/images/levels_backgrounds/{i}.jpg') for i in range(1, 10)]
 
     def create_background_image(self, clock: Clock, fps: int, background_image=None) -> None:
         self.image.create_lvl_menu_bg_img()
@@ -31,7 +31,7 @@ class LevelMenuInterface(BaseInterface):
         self.main_surface.blit(self.main_text, (self.text_x, self.text_y))
         self.main_surface.blit(self.text_shadow, (self.text_x + 5, self.text_y + 5))
         # to prevent circular import
-        from main_menu import MainMenu
+        from src.game_screens.main_menu import MainMenu
         self.create_buttons(text='BACK', coefficient=9, size=50, next_screen=MainMenu)
         self.main_surface.blit(self.main_text, (self.text_x, self.text_y))
         self.main_surface.blit(self.text_shadow, (self.text_x + 4, self.text_y + 1))
@@ -55,24 +55,22 @@ class LevelMenu(Surface):
     interface = LevelMenuInterface
 
     def __init__(self, width: int, height: int, main_app_class):
-        # print(dir(self))
-        print('LevelMenu.__init__')
         super().__init__((width, height))
         self.main_app_class = main_app_class
         self.width = width
         self.height = height
         self.interface = None
-        self.initialize()
-        # self.interface = LevelMenuInterface(
-        #     width=self.width, height=self.height,
-        #     main_surface=self, main_app_class=self.main_app_class
-        # )
-
-    def initialize(self):
+        # self.initialize()
         self.interface = LevelMenuInterface(
             width=self.width, height=self.height,
             main_surface=self, main_app_class=self.main_app_class
         )
+
+    # def initialize(self):
+    #     self.interface = LevelMenuInterface(
+    #         width=self.width, height=self.height,
+    #         main_surface=self, main_app_class=self.main_app_class
+    #     )
     # картинка меняет свои размеры, поверхность не меняет
 
     def handle_event(self, event: Event):

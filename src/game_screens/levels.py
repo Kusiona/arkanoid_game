@@ -51,7 +51,7 @@ class LevelSurface(Surface):
         self.width = width
         self.height = height
         self.level_number = level_number
-        self.level_images = [image.load(f'images/images_level/{i}.jpg') for i in range(1, 10)]
+        self.level_images = [image.load(f'static/images/levels_backgrounds/{i}.jpg') for i in range(1, 10)]
         self.image = self.level_images[self.level_number]
         self.interface = Level(
             width=self.width, height=self.height,
@@ -71,7 +71,7 @@ class LevelSurface(Surface):
 
 
 class Platform(Sprite):
-    IMAGE_PATH = 'static/images/images_elements/platform.png'
+    IMAGE_PATH = 'static/images/level_elements/platform.png'
 
     def __init__(self, width: int, height: int, main_app_class):
         super().__init__()
@@ -96,7 +96,7 @@ class Platform(Sprite):
 
 
 class Ball(Sprite):
-    IMAGE_PATH = 'static/images/images_elements/ball.png'
+    IMAGE_PATH = 'static/images/level_elements/ball.png'
 
     def __init__(self, width: int, height: int, main_app_class, coord_platform: float):
         super().__init__()

@@ -1,13 +1,13 @@
 import pygame
-from src.common.buttons import Button
 from pygame.surface import Surface
 from src.common.processing_image import Image
+from src.common.buttons import Button
 from pygame.time import Clock
 from pygame.event import Event
 
 
 class BaseInterface:
-    FONT = 'fonts/InvasionBold.ttf'
+    FONT_PATH = 'static/fonts/InvasionBold.ttf'
     MAIN_COLOR = (25, 25, 112)
     COLOR_SHADOW = (128, 0, 128)
 
@@ -27,7 +27,7 @@ class BaseInterface:
         pass
 
     def create_text(self, text: str, size: int, coefficient: int) -> None:
-        font = pygame.font.Font(self.FONT, size)
+        font = pygame.font.Font(self.FONT_PATH, size)
         self.main_text = font.render(text, True, self.MAIN_COLOR)
         self.text_shadow = font.render(text, True, self.COLOR_SHADOW)
         text_width, text_height = font.size(text)
@@ -35,13 +35,13 @@ class BaseInterface:
         self.text_y = ((self.height / 2) - text_height) / coefficient
 
     def create_buttons(self, text: str, size: int, coefficient: int, next_screen) -> None:
-        font = pygame.font.Font(self.FONT, size)
+        font = pygame.font.Font(self.FONT_PATH, size)
         text_size = font.size(text)
         self.text_x = (self.width - text_size[0]) / 2
         self.text_y = self.height - (self.height / coefficient)
 
         button = Button(text_size=text_size, text_x=self.text_x, text_y=self.text_y, next_screen=next_screen)
-        button.create(text=text, font=pygame.font.Font(self.FONT, size), action=text)
+        button.create(text=text, font=pygame.font.Font(self.FONT_PATH, size), action=text)
         if text == 'CHOOSE LEVEL':
             self.lvl_menu_button = button
         elif text == 'EXIT' or text == 'BACK':
@@ -91,7 +91,6 @@ class MainMenu(Surface):
     interface = MainMenuInterface
 
     def __init__(self, width: int, height: int, main_app_class):
-        print('MainMenu.__init__')
         super().__init__((width, height))
         self.width = width
         self.height = height
