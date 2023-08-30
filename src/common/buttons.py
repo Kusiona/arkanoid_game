@@ -1,29 +1,50 @@
-from pygame.rect import Rect
 import pygame
-import sys
-from pygame.font import Font
+from pygame.event import Event
+from pygame.event import post as post_event
+from src.common.base.button import TextButton, ImageButton
+from src.game_screens.level import Level
 
 
-class Button(Rect):
-    COLOR = (25, 25, 112)
-    SHADOW_COLOR = (128, 0, 128)
+class PlayButton(TextButton):
+    text = 'PLAY COMPANY'
 
-    def __init__(self, text_size: tuple, text_x: float = 1, text_y: float = 1, next_screen=None):
-        super().__init__(text_x, text_y, text_size[0], text_size[1])
-        self.button_text = None
-        self.button_text_shadow = None
-        self.text = None
-        self.font = None
-        self.action = None
-        self.next_screen = next_screen
+    def handle_event(self, event):
+        if self.check_left_clicked(event):
+            pass
 
-    def create(self, text: str, font: Font, action: str) -> None:
-        self.text = text
-        self.font = font
-        self.action = action
-        self.button_text = self.font.render(self.text, True, self.COLOR)
-        self.button_text_shadow = self.font.render(self.text, True, self.SHADOW_COLOR)
 
-    def exit(self) -> None:
-        pygame.quit()
-        sys.exit()
+class LevelsButton(TextButton):
+    text = 'CHOOSE LEVEL'
+
+    def handle_event(self, event):
+        if self.check_left_clicked(event):
+            from src.game_screens.levels_menu import LevelsMenu
+            self.parent_class.main_app_class.current_screen_class = LevelsMenu
+
+
+class ExitButton(TextButton):
+    text = 'EXIT'
+
+    def handle_event(self, event):
+        if self.check_left_clicked(event):
+            post_event(Event(pygame.QUIT))
+
+
+class LevelsMenuBackButton(TextButton):
+    text = 'BACK'
+
+    def handle_event(self, event):
+        if self.check_left_clicked(event):
+            from src.game_screens.main_menu import MainMenu
+            self.parent_class.main_app_class.current_screen_class = MainMenu
+
+
+class LevelButton(ImageButton):
+    def __init__(self, parent_class, image, level_name):
+        super().__init__(parent_class, image)
+        self.level_name = level_name
+
+    def handle_event(self, event):
+        if self.check_left_clicked(event):
+            self.parent_class.main_app_class.current_level = self.level_name
+            self.parent_class.main_app_class.current_screen_class = Level

@@ -1,116 +1,113 @@
-import pygame
 from pygame.surface import Surface
-from src.common.processing_image import Image
-from src.common.buttons import Button
-from pygame.time import Clock
 from pygame.event import Event
+from src.common.buttons import PlayButton, LevelsButton, ExitButton
+from src.common.image import Animation
+from src.common.base.font import Font
+from src.common.base.events import EventHandlingMixin
 
 
-class BaseInterface:
-    FONT_PATH = 'static/fonts/InvasionBold.ttf'
-    MAIN_COLOR = (25, 25, 112)
-    COLOR_SHADOW = (128, 0, 128)
+class MainMenuInterface:
+    # дублирование с лвл меню интерфейсом
+    TITLE_TEXT = 'ARKANOID'
+    TITLE_FONT_COEFF = 0.2
+    BUTTONS_FONT_COEFF = 0.1
 
-    def __init__(self, width: int, height: int, main_surface, main_app_class):
-        self.main_surface = main_surface
-        self.main_app_class = main_app_class
-        self.width = width
-        self.height = height
-        self.main_text = None
-        self.text_shadow = None
-        self.text_x = None
-        self.text_y = None
-        self.lvl_menu_button = None
+    def __init__(self, parent_class):
+        self.parent_class = parent_class
+        self.main_app_class = parent_class.main_app_class
+        self.main_app_class.extra_event_handlers.append(self.handle_event)
+        self.width = parent_class.get_width()
+        self.height = parent_class.get_height()
+        self.play_button = None
+        self.levels_button = None
         self.exit_button = None
+        self.render()
 
-    def create_background_image(self, clock: Clock, fps: int, background_image: Image = None) -> None:
+    def render(self) -> None:
+        self.create_title()
+        self.create_buttons()
+
+    def get_font_size(self, coeff):
+        size = int(self.width * coeff)
+        if self.height < self.width:
+            size = int(self.height * coeff)
+
+        return size
+
+    def create_title(self):
+        font_size = self.get_font_size(self.TITLE_FONT_COEFF)
+        font = Font(self.TITLE_TEXT, font_size)
+        text_width, text_height = font.surface.get_width(), font.surface.get_height()
+        x = (self.width - text_width) / 2
+        y = (self.height / 3) - text_height
+        self.parent_class.blit(
+            font.shadow_surface,
+            (
+                font.get_shadow_x(x, font_size),
+                font.get_shadow_y(y, font_size),
+            )
+        )
+        self.parent_class.blit(font.surface, (x, y))
+
+    def create_buttons(self):
+        font_size = self.get_font_size(self.BUTTONS_FONT_COEFF)
+        self.play_button = PlayButton(
+            parent_class=self.parent_class,
+            text_size=font_size
+        )
+        x = (self.width / 2) - (self.play_button.width / 2)
+        y = self.height / 2
+        self.play_button.render(x, y)
+
+        self.levels_button = LevelsButton(
+            parent_class=self.parent_class,
+            text_size=font_size
+        )
+        x = (self.width / 2) - (self.levels_button.width / 2)
+        y += font_size * 2
+        self.levels_button.render(x, y)
+
+        self.exit_button = ExitButton(
+            parent_class=self.parent_class,
+            text_size=font_size
+        )
+        x = (self.width / 2) - (self.exit_button.width / 2)
+        y += font_size * 2
+        self.exit_button.render(x, y)
+
+    def handle_event(self, event):
         pass
-
-    def create_text(self, text: str, size: int, coefficient: int) -> None:
-        font = pygame.font.Font(self.FONT_PATH, size)
-        self.main_text = font.render(text, True, self.MAIN_COLOR)
-        self.text_shadow = font.render(text, True, self.COLOR_SHADOW)
-        text_width, text_height = font.size(text)
-        self.text_x = (self.width - text_width) / 2
-        self.text_y = ((self.height / 2) - text_height) / coefficient
-
-    def create_buttons(self, text: str, size: int, coefficient: int, next_screen) -> None:
-        font = pygame.font.Font(self.FONT_PATH, size)
-        text_size = font.size(text)
-        self.text_x = (self.width - text_size[0]) / 2
-        self.text_y = self.height - (self.height / coefficient)
-
-        button = Button(text_size=text_size, text_x=self.text_x, text_y=self.text_y, next_screen=next_screen)
-        button.create(text=text, font=pygame.font.Font(self.FONT_PATH, size), action=text)
-        if text == 'CHOOSE LEVEL':
-            self.lvl_menu_button = button
-        elif text == 'EXIT' or text == 'BACK':
-            self.exit_button = button
-        self.main_text = button.button_text
-        self.text_shadow = button.button_text_shadow
-
-    def build_interface(self, clock: Clock, fps: int, background_image: Image) -> None:
-        pass
-
-
-class MainMenuInterface(BaseInterface):
-
-    def __init__(self, width: int, height: int, main_surface, main_app_class):
-        super().__init__(width=width, height=height, main_surface=main_surface, main_app_class=main_app_class)
-
-    def create_background_image(self, clock: Clock, fps: int, background_image: Image = None) -> None:
-        seconds = clock.tick(fps) / 300.0
-        background_image.update(seconds)
-        self.main_surface.blit(background_image.image, (0, 0))
-
-    def build_interface(self, clock: Clock, fps: int, background_image: Image) -> None:
-        self.create_text(text='ARKANOID', coefficient=2, size=130)
-
-        self.create_background_image(clock=clock, fps=fps, background_image=background_image)
-
-        self.main_surface.blit(self.main_text, (self.text_x, self.text_y))
-        self.main_surface.blit(self.text_shadow, (self.text_x + 5, self.text_y + 5))
-
-        self.create_buttons(text='PLAY COMPANY', size=70, coefficient=2, next_screen=None)
-        self.main_surface.blit(self.main_text, (self.text_x, self.text_y))
-        self.main_surface.blit(self.text_shadow, (self.text_x + 3, self.text_y + 3))
-        # to prevent circular import
-        from src.game_screens.level_menu import LevelMenu
-        self.create_buttons(text='CHOOSE LEVEL', size=70, coefficient=3,
-                            next_screen=LevelMenu)
-
-        self.main_surface.blit(self.main_text, (self.text_x, self.text_y))
-        self.main_surface.blit(self.text_shadow, (self.text_x + 3, self.text_y + 3))
-
-        self.create_buttons(text='EXIT', size=70, coefficient=6, next_screen=None)
-        self.main_surface.blit(self.main_text, (self.text_x, self.text_y))
-        self.main_surface.blit(self.text_shadow, (self.text_x + 3, self.text_y + 3))
 
 
 class MainMenu(Surface):
-    interface = MainMenuInterface
+    interface_class = MainMenuInterface
+    DYNAMIC = True
 
-    def __init__(self, width: int, height: int, main_app_class):
-        super().__init__((width, height))
-        self.width = width
-        self.height = height
+    def __init__(self, main_app_class):
+        super().__init__((main_app_class.WIDTH, main_app_class.HEIGHT))
         self.main_app_class = main_app_class
-        self.interface = MainMenuInterface(
-            main_surface=self, width=self.width,
-            height=self.height, main_app_class=self.main_app_class
-        )
+        self.main_app_class.extra_event_handlers.append(self.handle_event)
+        self.render()
+        self.interface = self.interface_class(parent_class=self)
 
-    def handle_event(self, event: Event):
-        if self.interface.lvl_menu_button.collidepoint(event.pos):
-            # self.main_app_class.current_screen = self.interface.lvl_menu_button.next_screen
-            self.main_app_class.current_screen = self.interface.lvl_menu_button.next_screen(
-                width=self.width, height=self.height, main_app_class=self.main_app_class
+    def render(self):
+        background_exists = hasattr(self.main_app_class, 'background')
+        background = self.main_app_class.background if background_exists else None
+        if not background_exists or background and not background.source_class == str(self):
+            self.main_app_class.background = Animation(
+                directory='main_menu_animation', parent_class=self
             )
-        elif self.interface.exit_button.collidepoint(event.pos):
-            self.interface.exit_button.exit()
 
-    def __repr__(self):
+        self.main_app_class.background.update(self)
+
+    def handle_event(self, event):
+        pass
+
+    def __str__(self):
         return 'MainMenu'
 
-    def get_name(self):
-        return self.__repr__()
+    def __delete__(self):
+        if hasattr(self, 'interface_class'):
+            del self.interface_class
+        if hasattr(self, 'background'):
+            del self.main_app_class.background
