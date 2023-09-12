@@ -39,6 +39,24 @@ class LevelsMenuBackButton(TextButton):
             self.parent_class.main_app_class.current_screen_class = MainMenu
 
 
+class ContinueButton(TextButton):
+    text = 'CONTINUE'
+
+    def handle_event(self, event):
+        if self.check_left_clicked(event):
+            from src.game_screens.level import Level
+            self.parent_class.main_app_class.current_screen_class = Level
+
+
+class ExitMenuButton(TextButton):
+    text = 'EXIT TO MENU'
+
+    def handle_event(self, event):
+        if self.check_left_clicked(event):
+            from src.game_screens.levels_menu import LevelsMenu
+            self.parent_class.main_app_class.current_screen_class = LevelsMenu
+
+
 class LevelButton(ImageButton):
     def __init__(self, parent_class, image, level_name):
         super().__init__(parent_class, image)

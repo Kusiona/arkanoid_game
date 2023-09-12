@@ -3,6 +3,7 @@ from pygame.surface import Surface
 from pygame.sprite import Sprite
 from pygame.event import Event
 from src.common.base.image import Image
+from src.game_screens.pause import PauseMenu
 
 
 class LevelInterface(Sprite):
@@ -45,7 +46,7 @@ class LevelInterface(Sprite):
 
 class Level(Surface):
     interface_class = LevelInterface
-    DYNAMIC = True
+    # DYNAMIC = True
 
     def __init__(self, main_app_class):
         super().__init__((main_app_class.WIDTH, main_app_class.HEIGHT))
@@ -69,7 +70,8 @@ class Level(Surface):
 
     def handle_event(self, event: Event):
         # отслеживать window resized
-        pass
+        if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
+            self.main_app_class.current_screen_class = PauseMenu
 
     def __str__(self):
         return f'Level {self.level_name}'

@@ -7,8 +7,8 @@ from src.common.buttons import LevelsMenuBackButton, LevelButton
 
 
 class InterfaceLevelCardsBlock:
-    CARDS_COLS = 10
-    CARDS_ROWS = 10
+    CARDS_COLS = 3
+    CARDS_ROWS = 3
     CARDS_PADDING_COEFF = 0.01
 
     def __init__(self, interface, parent_class, read_existed=False):
@@ -155,7 +155,7 @@ class LevelMenuInterface:
 
 class LevelsMenu(Surface):
     interface_class = LevelMenuInterface
-    DYNAMIC = False
+    # DYNAMIC = False
 
     def __init__(self, main_app_class):
         super().__init__((main_app_class.WIDTH, main_app_class.HEIGHT))

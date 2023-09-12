@@ -12,8 +12,8 @@ class Arkanoid:
     extra_event_handlers = []
 
     def __init__(self):
-        pygame.display.set_caption('Arkanoid')
-        pygame.display.set_icon(pygame.image.load('static/images/game_window_icon.png'))
+        pygame.display.set_caption('Arkanoid') # можно ли вынести, глаза режет. в остальном проекте все вынесено
+        pygame.display.set_icon(pygame.image.load('static/images/game_window_icon.png')) # можно ли вынести, глаза режет. в остальном проекте все вынесено
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.RESIZABLE)
         self.clock = pygame.time.Clock()
 
@@ -48,7 +48,6 @@ class Arkanoid:
             if event.type in up_types:
                 value = False
 
-            # гепотетически есть вероятность, что мышевские 1 2 3 это клавиатурные клавиши какие-то в том числе
             event_key = event.button if event.type in mouse_types else event.key
             self.buttons_presses[event_key] = value
 
@@ -84,12 +83,12 @@ class Arkanoid:
         self.current_screen = self.current_screen_class(main_app_class=self)
         self.screen.blit(self.current_screen, (0, 0))
         pygame.display.update()
-        import sys
-        from src.game_screens.level import Ball, Platform, Block
-        print(f'{self.current_screen_class} references count', sys.getrefcount(self.current_screen_class))
-        print('Ball references count', sys.getrefcount(Ball))
-        print('Platform references count', sys.getrefcount(Platform))
-        print('Block references count', sys.getrefcount(Block))
+        # import sys
+        # from src.game_screens.level import Ball, Platform, Block
+        # print(f'{self.current_screen_class} references count', sys.getrefcount(self.current_screen_class))
+        # print('Ball references count', sys.getrefcount(Ball))
+        # print('Platform references count', sys.getrefcount(Platform))
+        # print('Block references count', sys.getrefcount(Block))
 
 # возможно сделать флаг для текущего экрана dynamic
 # и сделать соотвествующий рендеринг для статичных и динамических экранов,
