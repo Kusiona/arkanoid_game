@@ -105,8 +105,8 @@ class MainMenu(Surface):
     def __str__(self):
         return 'MainMenu'
 
-    def __delete__(self):
-        if hasattr(self, 'interface_class'):
-            del self.interface_class
+    def __del__(self):
+        if hasattr(self, 'interface'):
+            del self.interface
         if hasattr(self, 'background'):
             del self.main_app_class.background

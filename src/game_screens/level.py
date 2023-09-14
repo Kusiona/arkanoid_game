@@ -27,7 +27,7 @@ class LevelInterface(Sprite):
         self.parent_class.blit(self.platform.image, self.platform.rect)
 
     def create_ball(self):
-        self.ball = Ball(parent_class=self.parent_class)
+        self.ball = Ball(parent_class=self.parent_class, speed=self.config['ball_speed'])
         self.parent_class.blit(self.ball.image, self.ball.rect)
 
     def create(self):
@@ -75,6 +75,12 @@ class Level(Surface):
 
     def __str__(self):
         return f'Level {self.level_name}'
+
+    def __del__(self):
+        if hasattr(self, 'interface'):
+            del self.interface
+        if hasattr(self, 'background'):
+            del self.main_app_class.background
 
 
 class Platform(Sprite):
@@ -124,6 +130,7 @@ class Platform(Sprite):
                 self.main_app_class.platform_offset -= self.speed
         self.rect = self.image.get_rect(topleft=(self.x - 1, self.y))
 
+
     def handle_event(self, event):
         pass
 
@@ -131,10 +138,12 @@ class Platform(Sprite):
 class Ball(Sprite):
     IMAGE_PATH = 'level_elements/ball.png'
     SIZE_COEFF = 0.05
+    PADDING_COEFF = 0.03
 
-    def __init__(self, parent_class):
+    def __init__(self, parent_class, speed):
         super().__init__()
         self.parent_class = parent_class
+        self.main_app_class = parent_class.main_app_class
         self.parent_class_width = parent_class.get_width()
         self.parent_class_height = parent_class.get_height()
         self.width = self.parent_class_width * self.SIZE_COEFF
@@ -142,17 +151,63 @@ class Ball(Sprite):
         self.platform = self.parent_class.main_app_class.platform
         self.parent_class.main_app_class.extra_event_handlers.append(self.handle_event)
         self.image = Image(self.IMAGE_PATH, self, self.width, self.height).image_surface
-
+        self.speed = speed
+        self.padding = (self.parent_class_height * self.PADDING_COEFF)
+        self.check_attr()
         self.x, self.y = self.get_coordinates()
         self.rect = self.image.get_rect(topleft=(self.x, self.y))
 
     def get_coordinates(self):
         x = self.platform.rect.x + self.platform.width / 2 - self.width / 2
+        x += self.main_app_class.ball_offset_x
         y = self.parent_class_height - (self.parent_class_height - self.platform.y) - self.height
+        y += self.main_app_class.ball_offset_y
         return x, y
 
     def update(self) -> None:
-        pass
+        if pygame.K_SPACE in self.main_app_class.buttons_presses:
+            self.movement_ball()
+            self.rect = self.image.get_rect(topleft=(self.x, self.y))
+
+    def movement_ball(self):
+        self.check_collisions()
+
+        if self.parent_class.main_app_class.move_up:
+            self.parent_class.main_app_class.ball_offset_y -= self.speed
+        if self.parent_class.main_app_class.move_down:
+            self.parent_class.main_app_class.ball_offset_y += self.speed
+        if self.parent_class.main_app_class.move_right:
+            self.parent_class.main_app_class.ball_offset_x += self.speed
+        if self.parent_class.main_app_class.move_left:
+            self.parent_class.main_app_class.ball_offset_x -= self.speed
+
+    def check_attr(self):
+        if not hasattr(self.parent_class.main_app_class, 'ball_offset_x'):
+            self.parent_class.main_app_class.ball_offset_x = 0
+        if not hasattr(self.parent_class.main_app_class, 'ball_offset_y'):
+            self.parent_class.main_app_class.ball_offset_y = 0
+        if not hasattr(self.parent_class.main_app_class, 'move_up'):
+            self.parent_class.main_app_class.move_up = True
+        if not hasattr(self.parent_class.main_app_class, 'move_down'):
+            self.parent_class.main_app_class.move_down = False
+        if not hasattr(self.parent_class.main_app_class, 'move_right'):
+            self.parent_class.main_app_class.move_right = True
+        if not hasattr(self.parent_class.main_app_class, 'move_left'):
+            self.parent_class.main_app_class.move_left = False
+
+    def check_collisions(self):
+        if self.y - self.padding <= 0:
+            self.parent_class.main_app_class.move_up = False
+            self.parent_class.main_app_class.move_down = True
+        if self.y + self.height + self.padding >= self.parent_class.main_app_class.HEIGHT:
+            self.parent_class.main_app_class.move_up = True
+            self.parent_class.main_app_class.move_down = False
+        if self.x + self.height + self.padding >= self.parent_class.main_app_class.WIDTH:
+            self.parent_class.main_app_class.move_right = False
+            self.parent_class.main_app_class.move_left = True
+        if self.x - self.padding <= 0:
+            self.parent_class.main_app_class.move_right = True
+            self.parent_class.main_app_class.move_left = False
 
     def handle_event(self, event):
         pass

@@ -3,7 +3,6 @@ from src.common.base.image import Image
 from src.common.base.font import Font
 
 
-# сплошной копипаст, но красиво вышло
 class PauseMenuInterface:
     TITLE_TEXT = 'PAUSE'
     TITLE_FONT_COEFF = 0.2
@@ -96,3 +95,9 @@ class PauseMenu(Surface):
 
     def handle_event(self, event):
         pass
+
+    def __del__(self):
+        if hasattr(self, 'interface'):
+            del self.interface
+        if hasattr(self, 'background'):
+            del self.main_app_class.background

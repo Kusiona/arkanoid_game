@@ -189,3 +189,11 @@ class LevelsMenu(Surface):
 
     def __str__(self):
         return 'LevelsMenu'
+
+    def __del__(self):
+        if hasattr(self.main_app_class, 'levels_cards'):
+            del self.main_app_class.levels_cards
+        if hasattr(self, 'interface'):
+            del self.interface
+        if hasattr(self, 'background'):
+            del self.main_app_class.background
