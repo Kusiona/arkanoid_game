@@ -56,10 +56,22 @@ class ExitMenuButton(TextButton):
             self.parent_class.main_app_class.platform_offset = 0
             self.parent_class.main_app_class.ball_offset_y = 0
             self.parent_class.main_app_class.ball_offset_x = 0
+            self.parent_class.main_app_class.life_counter = 3
             if pygame.K_SPACE in self.parent_class.main_app_class.buttons_presses:
                 self.parent_class.main_app_class.buttons_presses.pop(pygame.K_SPACE)
             from src.game_screens.levels_menu import LevelsMenu
             self.parent_class.main_app_class.current_screen_class = LevelsMenu
+
+
+class AgainButton(TextButton):
+    text = 'AGAIN'
+
+    def handle_event(self, event):
+        if self.check_left_clicked(event):
+            from src.game_screens.level import Level
+            self.parent_class.main_app_class.current_screen_class = Level
+            self.parent_class.main_app_class.life_counter = 3
+
 
 
 class LevelButton(ImageButton):

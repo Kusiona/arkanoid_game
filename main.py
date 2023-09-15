@@ -25,6 +25,8 @@ class Arkanoid:
         self.levels_config = None
         self.read_levels_config()
 
+        self.life_counter = 3
+
     def read_levels_config(self):
         # возможно сделать отдельный класс LevelConfig
         with open('levels_config.json', 'r') as f:

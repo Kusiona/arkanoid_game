@@ -4,9 +4,13 @@ from pygame.sprite import Sprite
 from pygame.event import Event
 from src.common.base.image import Image
 from src.game_screens.pause import PauseMenu
+from src.common.base.font import Font
+from src.game_screens.game_over_menu import GameOverMenu
 
 
 class LevelInterface(Sprite):
+    COUNT_FONT_SIZE_COEFF = 9
+
     def __init__(self, parent_class):
         super().__init__()
         self.parent_class = parent_class
@@ -30,7 +34,30 @@ class LevelInterface(Sprite):
         self.ball = Ball(parent_class=self.parent_class, speed=self.config['ball_speed'])
         self.parent_class.blit(self.ball.image, self.ball.rect)
 
+    def get_font_size(self, coeff):
+        size = int(self.width / coeff)
+        if self.height < self.width:
+            size = int(self.height / coeff)
+
+        return size
+
+    def create_life_counter(self):
+        font_size = self.get_font_size(self.COUNT_FONT_SIZE_COEFF)
+        font = Font(str(self.parent_class.main_app_class.life_counter), font_size)
+        text_width, text_height = font.surface.get_width(), font.surface.get_height()
+        x = self.width - text_width * 2
+        y = self.height - text_height
+        self.parent_class.blit(
+            font.shadow_surface,
+            (
+                font.get_shadow_x(x, font_size),
+                font.get_shadow_y(y, font_size),
+            )
+        )
+        self.parent_class.blit(font.surface, (x, y))
+
     def create(self):
+        self.create_life_counter()
         self.create_platform()
         self.create_ball()
 
@@ -72,6 +99,19 @@ class Level(Surface):
         # отслеживать window resized
         if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
             self.main_app_class.current_screen_class = PauseMenu
+
+    def restart(self):
+        self.main_app_class.buttons_presses.pop(pygame.K_SPACE)
+        self.main_app_class.platform_offset = 0
+        del self.main_app_class.ball_movement
+        self.check_life_counter()
+
+    def check_life_counter(self):
+        self.main_app_class.life_counter -= 1
+
+        if self.main_app_class.life_counter == 0:
+            self.main_app_class.current_screen_class = GameOverMenu
+
 
     def __str__(self):
         return f'Level {self.level_name}'
@@ -130,7 +170,6 @@ class Platform(Sprite):
                 self.main_app_class.platform_offset -= self.speed
         self.rect = self.image.get_rect(topleft=(self.x - 1, self.y))
 
-
     def handle_event(self, event):
         pass
 
@@ -158,56 +197,83 @@ class Ball(Sprite):
         self.rect = self.image.get_rect(topleft=(self.x, self.y))
 
     def get_coordinates(self):
-        x = self.platform.rect.x + self.platform.width / 2 - self.width / 2
-        x += self.main_app_class.ball_offset_x
-        y = self.parent_class_height - (self.parent_class_height - self.platform.y) - self.height
-        y += self.main_app_class.ball_offset_y
+        self.count_ball_offset()
+        x = self.main_app_class.ball_offset_x
+        y = self.main_app_class.ball_offset_y
         return x, y
+
+    def count_ball_offset(self):
+        if not pygame.K_SPACE in self.main_app_class.buttons_presses:
+            self.main_app_class.ball_offset_x = self.platform.rect.x + self.platform.width / 2 - self.width / 2
+            intermediate_result = self.parent_class_height - self.platform.y
+            self.parent_class.main_app_class.ball_offset_y = self.parent_class_height - intermediate_result
+            self.parent_class.main_app_class.ball_offset_y -= self.height
+
+    def check_attr(self): # переписать
+        if not hasattr(self.parent_class.main_app_class, 'ball_offset_x'):
+            self.parent_class.main_app_class.ball_offset_x = 0
+        if not hasattr(self.parent_class.main_app_class, 'ball_offset_y'):
+            self.parent_class.main_app_class.ball_offset_y = 0
+
+        if not hasattr(self.parent_class.main_app_class, 'ball_movement'):
+            self.parent_class.main_app_class.ball_movement = {
+                                                            'up': True,
+                                                            'down': False,
+                                                            'right': True,
+                                                            'left': False
+                                                        }
 
     def update(self) -> None:
         if pygame.K_SPACE in self.main_app_class.buttons_presses:
             self.movement_ball()
             self.rect = self.image.get_rect(topleft=(self.x, self.y))
 
-    def movement_ball(self):
+    def movement_ball(self): #переписать
+        if self.parent_class.main_app_class.ball_movement['up']:
+            self.parent_class.main_app_class.ball_offset_y -= self.speed
+        if self.parent_class.main_app_class.ball_movement['down']:
+            self.parent_class.main_app_class.ball_offset_y += self.speed
+
+        if self.parent_class.main_app_class.ball_movement['right']:
+            self.parent_class.main_app_class.ball_offset_x += self.speed
+        if self.parent_class.main_app_class.ball_movement['left']:
+            self.parent_class.main_app_class.ball_offset_x -= self.speed
         self.check_collisions()
 
-        if self.parent_class.main_app_class.move_up:
-            self.parent_class.main_app_class.ball_offset_y -= self.speed
-        if self.parent_class.main_app_class.move_down:
-            self.parent_class.main_app_class.ball_offset_y += self.speed
-        if self.parent_class.main_app_class.move_right:
-            self.parent_class.main_app_class.ball_offset_x += self.speed
-        if self.parent_class.main_app_class.move_left:
-            self.parent_class.main_app_class.ball_offset_x -= self.speed
-
-    def check_attr(self):
-        if not hasattr(self.parent_class.main_app_class, 'ball_offset_x'):
-            self.parent_class.main_app_class.ball_offset_x = 0
-        if not hasattr(self.parent_class.main_app_class, 'ball_offset_y'):
-            self.parent_class.main_app_class.ball_offset_y = 0
-        if not hasattr(self.parent_class.main_app_class, 'move_up'):
-            self.parent_class.main_app_class.move_up = True
-        if not hasattr(self.parent_class.main_app_class, 'move_down'):
-            self.parent_class.main_app_class.move_down = False
-        if not hasattr(self.parent_class.main_app_class, 'move_right'):
-            self.parent_class.main_app_class.move_right = True
-        if not hasattr(self.parent_class.main_app_class, 'move_left'):
-            self.parent_class.main_app_class.move_left = False
-
     def check_collisions(self):
+        self.check_collisions_wall()
+        if pygame.Rect.colliderect(self.rect, self.platform.rect):
+            self.check_collisions_platform()
+
+    def check_collisions_wall(self):
         if self.y - self.padding <= 0:
-            self.parent_class.main_app_class.move_up = False
-            self.parent_class.main_app_class.move_down = True
+            self.move_down()
         if self.y + self.height + self.padding >= self.parent_class.main_app_class.HEIGHT:
-            self.parent_class.main_app_class.move_up = True
-            self.parent_class.main_app_class.move_down = False
-        if self.x + self.height + self.padding >= self.parent_class.main_app_class.WIDTH:
-            self.parent_class.main_app_class.move_right = False
-            self.parent_class.main_app_class.move_left = True
+            self.parent_class.restart()
+        if self.x + self.width + self.padding >= self.parent_class.main_app_class.WIDTH:
+            self.move_left()
         if self.x - self.padding <= 0:
-            self.parent_class.main_app_class.move_right = True
-            self.parent_class.main_app_class.move_left = False
+            self.move_right()
+
+    def check_collisions_platform(self):
+        if not self.parent_class.main_app_class.ball_movement['up']:
+            self.move_up()
+
+    def move_up(self):
+        self.parent_class.main_app_class.ball_movement['up'] = True
+        self.parent_class.main_app_class.ball_movement['down'] = False
+
+    def move_down(self):
+        self.parent_class.main_app_class.ball_movement['up'] = False
+        self.parent_class.main_app_class.ball_movement['down'] = True
+
+    def move_right(self):
+        self.parent_class.main_app_class.ball_movement['right'] = True
+        self.parent_class.main_app_class.ball_movement['left'] = False
+
+    def move_left(self):
+        self.parent_class.main_app_class.ball_movement['right'] = False
+        self.parent_class.main_app_class.ball_movement['left'] = True
 
     def handle_event(self, event):
         pass
