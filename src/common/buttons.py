@@ -57,6 +57,7 @@ class ExitMenuButton(TextButton):
             self.parent_class.main_app_class.ball_offset_y = 0
             self.parent_class.main_app_class.ball_offset_x = 0
             self.parent_class.main_app_class.life_counter = 3
+            del self.parent_class.main_app_class.block_group
             if pygame.K_SPACE in self.parent_class.main_app_class.buttons_presses:
                 self.parent_class.main_app_class.buttons_presses.pop(pygame.K_SPACE)
             from src.game_screens.levels_menu import LevelsMenu

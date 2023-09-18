@@ -1,6 +1,6 @@
 import pygame
 from pygame.surface import Surface
-from pygame.sprite import Sprite
+from pygame.sprite import Sprite, Group
 from pygame.event import Event
 from src.common.base.image import Image
 from src.game_screens.pause import PauseMenu
@@ -28,11 +28,19 @@ class LevelInterface(Sprite):
 
     def create_platform(self):
         self.platform = Platform(self.parent_class, self.config['platform_speed'])
-        self.parent_class.blit(self.platform.image, self.platform.rect)
 
     def create_ball(self):
         self.ball = Ball(parent_class=self.parent_class, speed=self.config['ball_speed'])
-        self.parent_class.blit(self.ball.image, self.ball.rect)
+
+    def create_block(self):
+        self.parent_class.main_app_class.block_group.add(
+            Block(self.parent_class)
+        )
+
+    def check_block_group(self):
+        if not hasattr(self.parent_class.main_app_class, 'block_group'):
+            self.parent_class.main_app_class.block_group = Group()
+            self.create_block()
 
     def get_font_size(self, coeff):
         size = int(self.width / coeff)
@@ -60,12 +68,15 @@ class LevelInterface(Sprite):
         self.create_life_counter()
         self.create_platform()
         self.create_ball()
+        self.check_block_group()
 
     def update(self) -> None:
         self.platform.update()
         self.ball.update()
+        self.parent_class.main_app_class.block_group.update()
         self.parent_class.blit(self.platform.image, (self.platform.x, self.platform.y))
         self.parent_class.blit(self.ball.image, (self.ball.x, self.ball.y))
+        self.parent_class.main_app_class.block_group.draw(self.parent_class)
 
     def handle_event(self, event):
         pass
@@ -108,10 +119,34 @@ class Level(Surface):
 
     def check_life_counter(self):
         self.main_app_class.life_counter -= 1
-
         if self.main_app_class.life_counter == 0:
+            del self.main_app_class.block_group
             self.main_app_class.current_screen_class = GameOverMenu
 
+    def check_collisions_ball(self):
+        self.check_collisions_ball_wall()
+        self.check_collisions_ball_platform()
+        self.check_collisions_ball_block()
+
+    def check_collisions_ball_wall(self):
+        if self.interface.ball.y - self.interface.ball.padding <= 0:
+            self.interface.ball.move_down()
+        if self.interface.ball.y + self.interface.ball.padding >= self.main_app_class.HEIGHT:
+            self.restart()
+        if self.interface.ball.x + self.interface.ball.width + self.interface.ball.padding >= self.main_app_class.WIDTH:
+            self.interface.ball.move_left()
+        if self.interface.ball.x - self.interface.ball.padding <= 0:
+            self.interface.ball.move_right()
+
+    def check_collisions_ball_platform(self):
+        if pygame.Rect.colliderect(self.interface.ball.rect, self.interface.platform.rect):
+            self.interface.ball.move_up()
+
+    def check_collisions_ball_block(self):
+        block_collision = pygame.sprite.spritecollideany(self.interface.ball, self.main_app_class.block_group)
+        if block_collision:
+            block_collision.handle_collison()
+            self.interface.ball.move_reverse()
 
     def __str__(self):
         return f'Level {self.level_name}'
@@ -222,6 +257,12 @@ class Ball(Sprite):
                                                             'right': True,
                                                             'left': False
                                                         }
+# ball_movement = {
+#     'up-right': {'state': True, 'action': 'x+ y-'},
+#     'up-left': {'state': False, 'action': 'x- y-'},
+#     'down-right': {'state': False, 'action': 'x+ y+'},
+#     'down-left': {'state': False, 'action': 'x- y+'}
+# }
 
     def update(self) -> None:
         if pygame.K_SPACE in self.main_app_class.buttons_presses:
@@ -238,26 +279,11 @@ class Ball(Sprite):
             self.parent_class.main_app_class.ball_offset_x += self.speed
         if self.parent_class.main_app_class.ball_movement['left']:
             self.parent_class.main_app_class.ball_offset_x -= self.speed
-        self.check_collisions()
+        self.parent_class.check_collisions_ball()
 
-    def check_collisions(self):
-        self.check_collisions_wall()
-        if pygame.Rect.colliderect(self.rect, self.platform.rect):
-            self.check_collisions_platform()
-
-    def check_collisions_wall(self):
-        if self.y - self.padding <= 0:
-            self.move_down()
-        if self.y + self.height + self.padding >= self.parent_class.main_app_class.HEIGHT:
-            self.parent_class.restart()
-        if self.x + self.width + self.padding >= self.parent_class.main_app_class.WIDTH:
-            self.move_left()
-        if self.x - self.padding <= 0:
-            self.move_right()
-
-    def check_collisions_platform(self):
-        if not self.parent_class.main_app_class.ball_movement['up']:
-            self.move_up()
+    def move_reverse(self):
+        for move, active in self.parent_class.main_app_class.ball_movement.items():
+            self.parent_class.main_app_class.ball_movement[move] = not active
 
     def move_up(self):
         self.parent_class.main_app_class.ball_movement['up'] = True
@@ -279,9 +305,31 @@ class Ball(Sprite):
         pass
 
 
-class Block:
-    def __init__(self):
-        pass
+class Block(Sprite):
+    SIZE_COEFF = 10
+    IMAGE_PATH = 'level_elements/block.jpg'
+
+    def __init__(self, parent_class):
+        super().__init__()
+        self.parent_class = parent_class
+        self.main_app_class = parent_class.main_app_class
+        self.parent_class_width = parent_class.get_width()
+        self.parent_class_height = parent_class.get_height()
+        self.width = self.parent_class_width / self.SIZE_COEFF
+        self.height = self.parent_class_height / self.SIZE_COEFF / 2
+        self.parent_class.main_app_class.extra_event_handlers.append(self.handle_event)
+        self.image = Image(self.IMAGE_PATH, self, self.width, self.height).image_surface
+        self.x, self.y = self.get_coordinates()
+        self.rect = self.image.get_rect(topleft=(self.x, self.y))
+
+    def get_coordinates(self):
+        return 100, 100
+
+    def update(self):
+        self.parent_class.blit(self.image, (self.x, self.y))
+
+    def handle_collison(self):
+        self.kill()
 
     def handle_event(self, event):
         pass

@@ -3,54 +3,54 @@
     "background_image": "levels_backgrounds/1.jpg",
     "background_thumb": "",
     "platform_speed": 30,
-    "ball_speed": 10
+    "ball_speed": 5
   },
   "2": {
     "background_image": "levels_backgrounds/2.jpg",
     "background_image_thumb": "",
     "platform_speed": 30,
-    "ball_speed": 10
+    "ball_speed": 5
   },
   "3": {
     "background_image": "levels_backgrounds/3.jpg",
     "background_image_thumb": "",
     "platform_speed": 30,
-    "ball_speed": 10
+    "ball_speed": 5
   },
   "4": {
     "background_image": "levels_backgrounds/4.jpg",
     "background_image_thumb": "",
     "platform_speed": 30,
-    "ball_speed": 10
+    "ball_speed": 5
   },
   "5": {
     "background_image": "levels_backgrounds/5.jpg",
     "background_image_thumb": "",
     "platform_speed": 30,
-    "ball_speed": 10
+    "ball_speed": 5
   },
   "6": {
     "background_image": "levels_backgrounds/6.jpg",
     "background_image_thumb": "",
     "platform_speed": 30,
-    "ball_speed": 10
+    "ball_speed": 5
   },
   "7": {
     "background_image": "levels_backgrounds/7.jpg",
     "background_image_thumb": "",
     "platform_speed": 30,
-    "ball_speed": 10
+    "ball_speed": 5
   },
   "8": {
     "background_image": "levels_backgrounds/8.jpg",
     "background_image_thumb": "",
     "platform_speed": 30,
-    "ball_speed": 10
+    "ball_speed": 5
   },
   "9": {
     "background_image": "levels_backgrounds/9.jpg",
     "background_image_thumb": "",
     "platform_speed": 30,
-    "ball_speed": 10
+    "ball_speed": 5
   }
 }
