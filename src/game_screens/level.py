@@ -24,6 +24,7 @@ class LevelInterface(Sprite):
         self.platform = None
         self.ball = None
         self.config = self.parent_class.config
+        self.block_config = self.config['block']
         self.create()
 
     def create_platform(self):
@@ -32,15 +33,33 @@ class LevelInterface(Sprite):
     def create_ball(self):
         self.ball = Ball(parent_class=self.parent_class, speed=self.config['ball_speed'])
 
-    def create_block(self):
-        self.parent_class.main_app_class.block_group.add(
-            Block(self.parent_class)
-        )
+    def create_block_map(self):
+        for y, block_line in enumerate(self.config['block_map']):
+            len_line = len(block_line)
+            for x, map_icon in enumerate(block_line):
+                if map_icon:
+                    block = self.get_block_info(map_icon)
+                    coord_block_map = (x, y)
+                    self.parent_class.main_app_class.block_group.add(
+                        Block(
+                            self.parent_class,
+                            block,
+                            coord_block_map,
+                            len_line
+                        )
+                    )
+
+    def get_block_info(self, map_icon):
+        for block_name in self.block_config:
+            if ''.join(map_icon) == self.block_config[block_name]['map_icon']:
+                return self.block_config[block_name]
+            else:
+                continue
 
     def check_block_group(self):
         if not hasattr(self.parent_class.main_app_class, 'block_group'):
             self.parent_class.main_app_class.block_group = Group()
-            self.create_block()
+            self.create_block_map()
 
     def get_font_size(self, coeff):
         size = int(self.width / coeff)
@@ -142,11 +161,13 @@ class Level(Surface):
         if pygame.Rect.colliderect(self.interface.ball.rect, self.interface.platform.rect):
             self.interface.ball.move_up()
 
-    def check_collisions_ball_block(self):
-        block_collision = pygame.sprite.spritecollideany(self.interface.ball, self.main_app_class.block_group)
+    def check_collisions_ball_block(self): # по непонятным мне причинам срабатывает столько раз, сколько живет кубик
+        block_collision = pygame.sprite.spritecollideany(
+            self.interface.ball, self.main_app_class.block_group
+        )
         if block_collision:
-            block_collision.handle_collison()
             self.interface.ball.move_reverse()
+            block_collision.handle_collison()
 
     def __str__(self):
         return f'Level {self.level_name}'
@@ -306,30 +327,65 @@ class Ball(Sprite):
 
 
 class Block(Sprite):
-    SIZE_COEFF = 10
-    IMAGE_PATH = 'level_elements/block.jpg'
+    SIZE_COEFF = 0.7
 
-    def __init__(self, parent_class):
+    def __init__(self, parent_class, block, coord_block_map, len_line):
         super().__init__()
         self.parent_class = parent_class
         self.main_app_class = parent_class.main_app_class
         self.parent_class_width = parent_class.get_width()
         self.parent_class_height = parent_class.get_height()
-        self.width = self.parent_class_width / self.SIZE_COEFF
-        self.height = self.parent_class_height / self.SIZE_COEFF / 2
         self.parent_class.main_app_class.extra_event_handlers.append(self.handle_event)
-        self.image = Image(self.IMAGE_PATH, self, self.width, self.height).image_surface
+
+        self.block = block
+        self.stoutness = self.block['stoutness']
+        self.map_x, self.map_y = coord_block_map
+        self.len_line = len_line
+
+        self.width = self.parent_class_width / self.len_line * self.SIZE_COEFF
+        self.height = self.parent_class_height / self.len_line * self.SIZE_COEFF / 2
+
+        self.image = Image(self.block['image_path'], self, self.width, self.height).image_surface
         self.x, self.y = self.get_coordinates()
         self.rect = self.image.get_rect(topleft=(self.x, self.y))
 
     def get_coordinates(self):
-        return 100, 100
+        padding_block = self.get_padding_block()
+        padding_wall = self.get_padding_wall(padding_block)
+        x = padding_wall + (padding_block * self.map_x) + (self.width * self.map_x)
+        y = padding_wall + (padding_block * self.map_y) + (self.height * self.map_y)
+        return x, y
+
+    def get_padding_block(self):
+        return self.width / (self.len_line / 2)
+
+    def get_padding_wall(self, padding_block):
+        return (self.parent_class_width - (padding_block * (self.len_line - 1) + self.width * self.len_line)) / 2
 
     def update(self):
         self.parent_class.blit(self.image, (self.x, self.y))
 
     def handle_collison(self):
-        self.kill()
+        self.stoutness -= 1
+        if not self.stoutness:
+            self.kill()
 
     def handle_event(self, event):
         pass
+
+
+# todo: на сегодня
+#  после уничтожения всех кубиков должен вылезти экран с поздравлением и кнопка выхода в меню уровней
+#  у кубиков должны быть "уровни", сделать механику с прозрачностью кубиков на определенном количестве ударов
+#  переписать адекватным образом движение мячика, что могло бы упростить работу с столкновением с кубиками
+#  остался баг с перекрестом картинок, проверить ссылки на объекты bg
+#  при нажатии на пробел в любом экране мячик начинает движение - исправить баг
+#
+# todo кубики:
+#  должны быть контрастыми к фону
+#  3 стадии разбития у самого сложного кубика
+#
+#
+#
+#
+
