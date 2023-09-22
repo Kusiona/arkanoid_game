@@ -175,7 +175,7 @@ class Level(Surface):
             else:
                 self.interface.ball.change_direction_x()
                 self.interface.ball.change_direction_y()
-            block_collision.handle_collison()
+            block_collision.handle_collision()
         self.check_level_complete()
 
     def handle_event(self, event: Event):
@@ -356,7 +356,7 @@ class Block(Sprite):
     def update(self):
         self.parent_class.blit(self.image, (self.x, self.y))
 
-    def handle_collison(self):
+    def handle_collision(self):
         self.stoutness -= 1
         if not self.stoutness:
             self.kill()
@@ -369,13 +369,3 @@ class Block(Sprite):
 
     def handle_event(self, event):
         pass
-
-
-# todo: на сегодня
-#  после уничтожения всех кубиков должен вылезти экран с поздравлением и кнопка выхода в меню уровней
-#  у кубиков должны быть "уровни", сделать механику с прозрачностью кубиков на определенном количестве ударов
-#  переписать адекватным образом движение мячика, что могло бы упростить работу с столкновением с кубиками
-#
-# todo:
-#     проверка столкновения мячика с кубиком срабатывает до тех пор, пока не исчезнет кубик
-#     при обновлении уровня или при рестарте нужно приводить к стартовым значениям все расчеты мячика
