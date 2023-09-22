@@ -2,57 +2,49 @@
   "1": {
     "background_image": "levels_backgrounds/1.jpg",
     "background_thumb": "",
-    "platform_speed": 30,
+    "platform_speed": 15,
     "ball_speed": 5,
     "block": {
       "strong_block": {
         "stoutness": 3,
-        "image_path": "level_elements/strong_block.jpg",
+        "image_path": "level_elements/3_stoutness_block.jpg",
         "map_icon": "***"
       },
       "middle_block": {
         "stoutness": 2,
-        "image_path": "level_elements/middle_block.jpg",
+        "image_path": "level_elements/2_stoutness_block.jpg",
         "map_icon": "**"
       },
       "simple_block": {
         "stoutness": 1,
-        "image_path": "level_elements/simple_block.jpg",
+        "image_path": "level_elements/1_stoutness_block.jpg",
         "map_icon": "*"
       }
     },
     "block_map": [
-      [["***"], ["***"], ["***"], ["***"], ["***"], ["***"], ["***"], ["***"], ["***"], ["***"]],
-      [["***"], ["***"], ["***"], ["***"], ["***"], ["***"], ["***"], ["***"], ["***"], ["***"]],
-      [["***"], ["***"], ["***"], ["***"], ["***"], ["***"], ["***"], ["***"], ["***"], ["***"]],
-      [["**"], ["**"], ["**"], ["**"], ["**"], ["**"], ["**"], ["**"], ["**"], ["**"]],
-      [["**"], ["**"], ["**"], ["**"], ["**"], ["**"], ["**"], ["**"], ["**"], ["**"]],
-      [["**"], ["**"], ["**"], ["**"], ["**"], ["**"], ["**"], ["**"], ["**"], ["**"]],
-      [["*"], ["*"], ["*"], ["*"], ["*"], ["*"], ["*"], ["*"], ["*"], ["*"]],
-      [["*"], ["*"], ["*"], ["*"], ["*"], ["*"], ["*"], ["*"], ["*"], ["*"]],
-      [["*"], ["*"], ["*"], ["*"], ["*"], ["*"], ["*"], ["*"], ["*"], ["*"]]
+      [["*"], ["*"], [], [], [], [], [], [], [], []]
     ]
   },
 
   "2": {
     "background_image": "levels_backgrounds/2.jpg",
     "background_image_thumb": "",
-    "platform_speed": 30,
+    "platform_speed": 15,
     "ball_speed": 5,
     "block": {
       "strong_block": {
         "stoutness": 3,
-        "image_path": "level_elements/strong_block.jpg",
+        "image_path": "level_elements/3_stoutness_block.jpg",
         "map_icon": "***"
       },
       "middle_block": {
         "stoutness": 2,
-        "image_path": "level_elements/middle_block.jpg",
+        "image_path": "level_elements/2_stoutness_block.jpg",
         "map_icon": "**"
       },
       "simple_block": {
         "stoutness": 1,
-        "image_path": "level_elements/simple_block.jpg",
+        "image_path": "level_elements/1_stoutness_block.jpg",
         "map_icon": "*"
       }
     },
@@ -77,17 +69,17 @@
     "block": {
       "strong_block": {
         "stoutness": 3,
-        "image_path": "level_elements/strong_block.jpg",
+        "image_path": "level_elements/3_stoutness_block.jpg",
         "map_icon": "***"
       },
       "middle_block": {
         "stoutness": 2,
-        "image_path": "level_elements/middle_block.jpg",
+        "image_path": "level_elements/2_stoutness_block.jpg",
         "map_icon": "**"
       },
       "simple_block": {
         "stoutness": 1,
-        "image_path": "level_elements/simple_block.jpg",
+        "image_path": "level_elements/1_stoutness_block.jpg",
         "map_icon": "*"
       }
     },
@@ -112,17 +104,17 @@
     "block": {
       "strong_block": {
         "stoutness": 3,
-        "image_path": "level_elements/strong_block.jpg",
+        "image_path": "level_elements/3_stoutness_block.jpg",
         "map_icon": "***"
       },
       "middle_block": {
         "stoutness": 2,
-        "image_path": "level_elements/middle_block.jpg",
+        "image_path": "level_elements/2_stoutness_block.jpg",
         "map_icon": "**"
       },
       "simple_block": {
         "stoutness": 1,
-        "image_path": "level_elements/simple_block.jpg",
+        "image_path": "level_elements/1_stoutness_block.jpg",
         "map_icon": "*"
       }
     },
@@ -147,17 +139,17 @@
     "block": {
       "strong_block": {
         "stoutness": 3,
-        "image_path": "level_elements/strong_block.jpg",
+        "image_path": "level_elements/3_stoutness_block.jpg",
         "map_icon": "***"
       },
       "middle_block": {
         "stoutness": 2,
-        "image_path": "level_elements/middle_block.jpg",
+        "image_path": "level_elements/2_stoutness_block.jpg",
         "map_icon": "**"
       },
       "simple_block": {
         "stoutness": 1,
-        "image_path": "level_elements/simple_block.jpg",
+        "image_path": "level_elements/1_stoutness_block.jpg",
         "map_icon": "*"
       }
     },
@@ -182,17 +174,17 @@
     "block": {
       "strong_block": {
         "stoutness": 3,
-        "image_path": "level_elements/strong_block.jpg",
+        "image_path": "level_elements/3_stoutness_block.jpg",
         "map_icon": "***"
       },
       "middle_block": {
         "stoutness": 2,
-        "image_path": "level_elements/middle_block.jpg",
+        "image_path": "level_elements/2_stoutness_block.jpg",
         "map_icon": "**"
       },
       "simple_block": {
         "stoutness": 1,
-        "image_path": "level_elements/simple_block.jpg",
+        "image_path": "level_elements/1_stoutness_block.jpg",
         "map_icon": "*"
       }
     },
@@ -217,17 +209,17 @@
     "block": {
       "strong_block": {
         "stoutness": 3,
-        "image_path": "level_elements/strong_block.jpg",
+        "image_path": "level_elements/3_stoutness_block.jpg",
         "map_icon": "***"
       },
       "middle_block": {
         "stoutness": 2,
-        "image_path": "level_elements/middle_block.jpg",
+        "image_path": "level_elements/2_stoutness_block.jpg",
         "map_icon": "**"
       },
       "simple_block": {
         "stoutness": 1,
-        "image_path": "level_elements/simple_block.jpg",
+        "image_path": "level_elements/1_stoutness_block.jpg",
         "map_icon": "*"
       }
     },
@@ -252,17 +244,17 @@
     "block": {
       "strong_block": {
         "stoutness": 3,
-        "image_path": "level_elements/strong_block.jpg",
+        "image_path": "level_elements/3_stoutness_block.jpg",
         "map_icon": "***"
       },
       "middle_block": {
         "stoutness": 2,
-        "image_path": "level_elements/middle_block.jpg",
+        "image_path": "level_elements/2_stoutness_block.jpg",
         "map_icon": "**"
       },
       "simple_block": {
         "stoutness": 1,
-        "image_path": "level_elements/simple_block.jpg",
+        "image_path": "level_elements/1_stoutness_block.jpg",
         "map_icon": "*"
       }
     },
@@ -287,17 +279,17 @@
     "block": {
       "strong_block": {
         "stoutness": 3,
-        "image_path": "level_elements/strong_block.jpg",
+        "image_path": "level_elements/3_stoutness_block.jpg",
         "map_icon": "***"
       },
       "middle_block": {
         "stoutness": 2,
-        "image_path": "level_elements/middle_block.jpg",
+        "image_path": "level_elements/2_stoutness_block.jpg",
         "map_icon": "**"
       },
       "simple_block": {
         "stoutness": 1,
-        "image_path": "level_elements/simple_block.jpg",
+        "image_path": "level_elements/1_stoutness_block.jpg",
         "map_icon": "*"
       }
     },

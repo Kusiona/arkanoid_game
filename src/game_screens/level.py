@@ -5,7 +5,9 @@ from pygame.event import Event
 from src.common.base.image import Image
 from src.game_screens.pause import PauseMenu
 from src.common.base.font import Font
+from src.game_screens.level_complete_menu import LevelCompleteMenu
 from src.game_screens.game_over_menu import GameOverMenu
+import random
 
 
 class LevelInterface(Sprite):
@@ -34,6 +36,7 @@ class LevelInterface(Sprite):
         self.ball = Ball(parent_class=self.parent_class, speed=self.config['ball_speed'])
 
     def create_block_map(self):
+
         for y, block_line in enumerate(self.config['block_map']):
             len_line = len(block_line)
             for x, map_icon in enumerate(block_line):
@@ -68,7 +71,7 @@ class LevelInterface(Sprite):
 
         return size
 
-    def create_life_counter(self):
+    def update_life_counter(self):
         font_size = self.get_font_size(self.COUNT_FONT_SIZE_COEFF)
         font = Font(str(self.parent_class.main_app_class.life_counter), font_size)
         text_width, text_height = font.surface.get_width(), font.surface.get_height()
@@ -84,12 +87,12 @@ class LevelInterface(Sprite):
         self.parent_class.blit(font.surface, (x, y))
 
     def create(self):
-        self.create_life_counter()
         self.create_platform()
         self.create_ball()
         self.check_block_group()
 
     def update(self) -> None:
+        self.update_life_counter()
         self.platform.update()
         self.ball.update()
         self.parent_class.main_app_class.block_group.update()
@@ -98,7 +101,9 @@ class LevelInterface(Sprite):
         self.parent_class.main_app_class.block_group.draw(self.parent_class)
 
     def handle_event(self, event):
-        pass
+        if event.type == pygame.WINDOWRESIZED:
+            self.width, self.height = event.x, event.y
+            self.parent_class.main_app_class.block_group.update()
 
 
 class Level(Surface):
@@ -125,21 +130,18 @@ class Level(Surface):
         self.set_background(bg_image.image_surface)
         self.interface.update()
 
-    def handle_event(self, event: Event):
-        # отслеживать window resized
-        if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
-            self.main_app_class.current_screen_class = PauseMenu
-
     def restart(self):
         self.main_app_class.buttons_presses.pop(pygame.K_SPACE)
         self.main_app_class.platform_offset = 0
-        del self.main_app_class.ball_movement
         self.check_life_counter()
+
+    def check_level_complete(self):
+        if not self.main_app_class.block_group:
+            self.main_app_class.current_screen_class = LevelCompleteMenu
 
     def check_life_counter(self):
         self.main_app_class.life_counter -= 1
         if self.main_app_class.life_counter == 0:
-            del self.main_app_class.block_group
             self.main_app_class.current_screen_class = GameOverMenu
 
     def check_collisions_ball(self):
@@ -148,34 +150,45 @@ class Level(Surface):
         self.check_collisions_ball_block()
 
     def check_collisions_ball_wall(self):
-        if self.interface.ball.y - self.interface.ball.padding <= 0:
-            self.interface.ball.move_down()
-        if self.interface.ball.y + self.interface.ball.padding >= self.main_app_class.HEIGHT:
+        if self.interface.ball.y - self.main_app_class.speed_y <= 0:
+            self.interface.ball.change_direction_y()
+        elif self.interface.ball.x + (
+                self.interface.ball.width - self.main_app_class.speed_x) >= self.main_app_class.WIDTH:
+            self.interface.ball.change_direction_x()
+        elif self.interface.ball.x - self.main_app_class.speed_x <= 0:
+            self.interface.ball.change_direction_x()
+        elif self.interface.ball.y + self.interface.ball.height >= self.main_app_class.HEIGHT:
             self.restart()
-        if self.interface.ball.x + self.interface.ball.width + self.interface.ball.padding >= self.main_app_class.WIDTH:
-            self.interface.ball.move_left()
-        if self.interface.ball.x - self.interface.ball.padding <= 0:
-            self.interface.ball.move_right()
 
     def check_collisions_ball_platform(self):
-        if pygame.Rect.colliderect(self.interface.ball.rect, self.interface.platform.rect):
-            self.interface.ball.move_up()
+        if self.interface.ball.rect.colliderect(self.interface.platform.rect):
+            self.interface.ball.change_direction_y()
 
     def check_collisions_ball_block(self): # по непонятным мне причинам срабатывает столько раз, сколько живет кубик
         block_collision = pygame.sprite.spritecollideany(
             self.interface.ball, self.main_app_class.block_group
         )
         if block_collision:
-            self.interface.ball.move_reverse()
+            if random.randint(0, 1):
+                self.interface.ball.change_direction_y()
+
+            else:
+                self.interface.ball.change_direction_x()
+                self.interface.ball.change_direction_y()
             block_collision.handle_collison()
+        self.check_level_complete()
+
+    def handle_event(self, event: Event):
+        if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
+            self.main_app_class.current_screen_class = PauseMenu
 
     def __str__(self):
-        return f'Level {self.level_name}'
+        return 'Level'
 
     def __del__(self):
         if hasattr(self, 'interface'):
             del self.interface
-        if hasattr(self, 'background'):
+        if hasattr(self.main_app_class, 'background'):
             del self.main_app_class.background
 
 
@@ -261,66 +274,44 @@ class Ball(Sprite):
     def count_ball_offset(self):
         if not pygame.K_SPACE in self.main_app_class.buttons_presses:
             self.main_app_class.ball_offset_x = self.platform.rect.x + self.platform.width / 2 - self.width / 2
-            intermediate_result = self.parent_class_height - self.platform.y
-            self.parent_class.main_app_class.ball_offset_y = self.parent_class_height - intermediate_result
-            self.parent_class.main_app_class.ball_offset_y -= self.height
+            self.parent_class.main_app_class.ball_offset_y = self.parent_class_height - (
+                    self.parent_class_height - self.platform.y
+            ) - self.height
 
-    def check_attr(self): # переписать
+    def check_attr(self):
         if not hasattr(self.parent_class.main_app_class, 'ball_offset_x'):
             self.parent_class.main_app_class.ball_offset_x = 0
+
         if not hasattr(self.parent_class.main_app_class, 'ball_offset_y'):
             self.parent_class.main_app_class.ball_offset_y = 0
 
-        if not hasattr(self.parent_class.main_app_class, 'ball_movement'):
-            self.parent_class.main_app_class.ball_movement = {
-                                                            'up': True,
-                                                            'down': False,
-                                                            'right': True,
-                                                            'left': False
-                                                        }
-# ball_movement = {
-#     'up-right': {'state': True, 'action': 'x+ y-'},
-#     'up-left': {'state': False, 'action': 'x- y-'},
-#     'down-right': {'state': False, 'action': 'x+ y+'},
-#     'down-left': {'state': False, 'action': 'x- y+'}
-# }
+        if not hasattr(self.parent_class.main_app_class, 'speed_x'):
+            self.parent_class.main_app_class.speed_x = self.speed
+
+        if not hasattr(self.parent_class.main_app_class, 'speed_y'):
+            self.parent_class.main_app_class.speed_y = self.speed
 
     def update(self) -> None:
         if pygame.K_SPACE in self.main_app_class.buttons_presses:
             self.movement_ball()
             self.rect = self.image.get_rect(topleft=(self.x, self.y))
+        else:
+            self.random_start()
 
-    def movement_ball(self): #переписать
-        if self.parent_class.main_app_class.ball_movement['up']:
-            self.parent_class.main_app_class.ball_offset_y -= self.speed
-        if self.parent_class.main_app_class.ball_movement['down']:
-            self.parent_class.main_app_class.ball_offset_y += self.speed
+    def random_start(self):
+        if random.randint(0, 1):
+            self.parent_class.main_app_class.speed_x *= -1
 
-        if self.parent_class.main_app_class.ball_movement['right']:
-            self.parent_class.main_app_class.ball_offset_x += self.speed
-        if self.parent_class.main_app_class.ball_movement['left']:
-            self.parent_class.main_app_class.ball_offset_x -= self.speed
+    def movement_ball(self):
         self.parent_class.check_collisions_ball()
+        self.parent_class.main_app_class.ball_offset_x -= self.parent_class.main_app_class.speed_x
+        self.parent_class.main_app_class.ball_offset_y -= self.parent_class.main_app_class.speed_y
 
-    def move_reverse(self):
-        for move, active in self.parent_class.main_app_class.ball_movement.items():
-            self.parent_class.main_app_class.ball_movement[move] = not active
+    def change_direction_x(self):
+        self.parent_class.main_app_class.speed_x *= -1
 
-    def move_up(self):
-        self.parent_class.main_app_class.ball_movement['up'] = True
-        self.parent_class.main_app_class.ball_movement['down'] = False
-
-    def move_down(self):
-        self.parent_class.main_app_class.ball_movement['up'] = False
-        self.parent_class.main_app_class.ball_movement['down'] = True
-
-    def move_right(self):
-        self.parent_class.main_app_class.ball_movement['right'] = True
-        self.parent_class.main_app_class.ball_movement['left'] = False
-
-    def move_left(self):
-        self.parent_class.main_app_class.ball_movement['right'] = False
-        self.parent_class.main_app_class.ball_movement['left'] = True
+    def change_direction_y(self):
+        self.parent_class.main_app_class.speed_y *= -1
 
     def handle_event(self, event):
         pass
@@ -369,6 +360,12 @@ class Block(Sprite):
         self.stoutness -= 1
         if not self.stoutness:
             self.kill()
+        else:
+            self.image = Image(
+                f'level_elements/{self.stoutness}_stoutness_block.jpg',
+                self, self.width,
+                self.height
+            ).image_surface
 
     def handle_event(self, event):
         pass
@@ -378,14 +375,7 @@ class Block(Sprite):
 #  после уничтожения всех кубиков должен вылезти экран с поздравлением и кнопка выхода в меню уровней
 #  у кубиков должны быть "уровни", сделать механику с прозрачностью кубиков на определенном количестве ударов
 #  переписать адекватным образом движение мячика, что могло бы упростить работу с столкновением с кубиками
-#  остался баг с перекрестом картинок, проверить ссылки на объекты bg
-#  при нажатии на пробел в любом экране мячик начинает движение - исправить баг
 #
-# todo кубики:
-#  должны быть контрастыми к фону
-#  3 стадии разбития у самого сложного кубика
-#
-#
-#
-#
-
+# todo:
+#     проверка столкновения мячика с кубиком срабатывает до тех пор, пока не исчезнет кубик
+#     при обновлении уровня или при рестарте нужно приводить к стартовым значениям все расчеты мячика

@@ -80,7 +80,6 @@ class PauseMenu(Surface):
         self.interface = self.interface_class(parent_class=self)
 
     def set_background(self, image):
-        # print('PauseMenu.set_background', image)
         self.blit(image, (0, 0))
 
     def render(self):
@@ -100,5 +99,5 @@ class PauseMenu(Surface):
     def __del__(self):
         if hasattr(self, 'interface'):
             del self.interface
-        if hasattr(self, 'background'):
+        if hasattr(self.main_app_class, 'background'):
             del self.main_app_class.background

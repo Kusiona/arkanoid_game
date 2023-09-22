@@ -22,7 +22,6 @@ class InterfaceLevelCardsBlock:
             self.create_levels_cards()
 
     def place_cards(self):
-        # узнать есть ли какой-то draw у сюрфэйсов как у спрайтов
         for card in self.parent_class.main_app_class.levels_cards:
             card.parent_class = self.parent_class
             self.parent_class.main_app_class.extra_event_handlers.append(card.handle_event)
@@ -195,5 +194,5 @@ class LevelsMenu(Surface):
             del self.main_app_class.levels_cards
         if hasattr(self, 'interface'):
             del self.interface
-        if hasattr(self, 'background'):
+        if hasattr(self.main_app_class, 'background'):
             del self.main_app_class.background
