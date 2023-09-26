@@ -108,5 +108,3 @@ class MainMenu(Surface):
     def __del__(self):
         if hasattr(self, 'interface'):
             del self.interface
-        if hasattr(self.main_app_class, 'background'):
-            del self.main_app_class.background

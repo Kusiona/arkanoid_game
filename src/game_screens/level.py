@@ -36,7 +36,7 @@ class LevelInterface(Sprite):
         self.ball = Ball(parent_class=self.parent_class, speed=self.config['ball_speed'])
 
     def create_block_map(self):
-
+        len_column = len(self.config['block_map'])
         for y, block_line in enumerate(self.config['block_map']):
             len_line = len(block_line)
             for x, map_icon in enumerate(block_line):
@@ -48,16 +48,17 @@ class LevelInterface(Sprite):
                             self.parent_class,
                             block,
                             coord_block_map,
-                            len_line
+                            len_line,
+                            len_column,
+                            self.width,
+                            self.height
                         )
                     )
 
-    def get_block_info(self, map_icon):
+    def get_block_info(self, stoutness):
         for block_name in self.block_config:
-            if ''.join(map_icon) == self.block_config[block_name]['map_icon']:
+            if stoutness == self.block_config[block_name]['stoutness']:
                 return self.block_config[block_name]
-            else:
-                continue
 
     def check_block_group(self):
         if not hasattr(self.parent_class.main_app_class, 'block_group'):
@@ -103,7 +104,8 @@ class LevelInterface(Sprite):
     def handle_event(self, event):
         if event.type == pygame.WINDOWRESIZED:
             self.width, self.height = event.x, event.y
-            self.parent_class.main_app_class.block_group.update()
+            self.parent_class.main_app_class.block_group.empty()
+            self.create_block_map()
 
 
 class Level(Surface):
@@ -164,7 +166,7 @@ class Level(Surface):
         if self.interface.ball.rect.colliderect(self.interface.platform.rect):
             self.interface.ball.change_direction_y()
 
-    def check_collisions_ball_block(self): # по непонятным мне причинам срабатывает столько раз, сколько живет кубик
+    def check_collisions_ball_block(self):
         block_collision = pygame.sprite.spritecollideany(
             self.interface.ball, self.main_app_class.block_group
         )
@@ -265,19 +267,6 @@ class Ball(Sprite):
         self.x, self.y = self.get_coordinates()
         self.rect = self.image.get_rect(topleft=(self.x, self.y))
 
-    def get_coordinates(self):
-        self.count_ball_offset()
-        x = self.main_app_class.ball_offset_x
-        y = self.main_app_class.ball_offset_y
-        return x, y
-
-    def count_ball_offset(self):
-        if not pygame.K_SPACE in self.main_app_class.buttons_presses:
-            self.main_app_class.ball_offset_x = self.platform.rect.x + self.platform.width / 2 - self.width / 2
-            self.parent_class.main_app_class.ball_offset_y = self.parent_class_height - (
-                    self.parent_class_height - self.platform.y
-            ) - self.height
-
     def check_attr(self):
         if not hasattr(self.parent_class.main_app_class, 'ball_offset_x'):
             self.parent_class.main_app_class.ball_offset_x = 0
@@ -290,6 +279,19 @@ class Ball(Sprite):
 
         if not hasattr(self.parent_class.main_app_class, 'speed_y'):
             self.parent_class.main_app_class.speed_y = self.speed
+
+    def get_coordinates(self):
+        self.count_ball_offset()
+        x = self.main_app_class.ball_offset_x
+        y = self.main_app_class.ball_offset_y
+        return x, y
+
+    def count_ball_offset(self):
+        if not pygame.K_SPACE in self.main_app_class.buttons_presses:
+            self.main_app_class.ball_offset_x = self.platform.rect.x + self.platform.width / 2 - self.width / 2
+            self.parent_class.main_app_class.ball_offset_y = self.parent_class_height - (
+                    self.parent_class_height - self.platform.y
+            ) - self.height
 
     def update(self) -> None:
         if pygame.K_SPACE in self.main_app_class.buttons_presses:
@@ -318,46 +320,77 @@ class Ball(Sprite):
 
 
 class Block(Sprite):
-    SIZE_COEFF = 0.7
+    inner_indent_coeff = 0.01
+    outer_indent_coeff = 0.04
 
-    def __init__(self, parent_class, block, coord_block_map, len_line):
+    def __init__(self, parent_class, block,
+                 coord_block_map, len_line, len_column,
+                 parent_class_width, parent_class_height):
         super().__init__()
         self.parent_class = parent_class
         self.main_app_class = parent_class.main_app_class
-        self.parent_class_width = parent_class.get_width()
-        self.parent_class_height = parent_class.get_height()
+        self.parent_class_width = parent_class_width
+        self.parent_class_height = parent_class_height
         self.parent_class.main_app_class.extra_event_handlers.append(self.handle_event)
 
         self.block = block
         self.stoutness = self.block['stoutness']
         self.map_x, self.map_y = coord_block_map
         self.len_line = len_line
-
-        self.width = self.parent_class_width / self.len_line * self.SIZE_COEFF
-        self.height = self.parent_class_height / self.len_line * self.SIZE_COEFF / 2
+        self.len_column = len_column
+        self.width = self.get_width()
+        self.height = self.get_height()
 
         self.image = Image(self.block['image_path'], self, self.width, self.height).image_surface
         self.x, self.y = self.get_coordinates()
         self.rect = self.image.get_rect(topleft=(self.x, self.y))
 
     def get_coordinates(self):
-        padding_block = self.get_padding_block()
-        padding_wall = self.get_padding_wall(padding_block)
-        x = padding_wall + (padding_block * self.map_x) + (self.width * self.map_x)
-        y = padding_wall + (padding_block * self.map_y) + (self.height * self.map_y)
+        x = self.get_outer_indent_x() + (self.get_inner_indent_x() * self.map_x) + (self.width * self.map_x)
+        y = self.get_outer_indent_y() + (self.get_inner_indent_y() * self.map_y) + (self.height * self.map_y)
         return x, y
 
-    def get_padding_block(self):
-        return self.width / (self.len_line / 2)
+    def get_outer_indent_x(self):
+        return self.parent_class_width * self.outer_indent_coeff
 
-    def get_padding_wall(self, padding_block):
-        return (self.parent_class_width - (padding_block * (self.len_line - 1) + self.width * self.len_line)) / 2
+    def get_outer_indent_y(self):
+        return self.parent_class_height * self.outer_indent_coeff
+
+    def get_inner_indent_x(self):
+        return self.parent_class_width * self.inner_indent_coeff
+
+    def get_inner_indent_y(self):
+        return self.parent_class_height * self.inner_indent_coeff
+
+    def get_available_width(self):
+        available_width = self.parent_class_width - (
+                self.get_outer_indent_x() * 2) - (self.get_inner_indent_x() * (self.len_line - 1))
+        if available_width < 0:
+            available_width = 0
+        return available_width
+
+    def get_available_height(self):
+        available_height = (self.parent_class_height / 2) - (
+                self.get_outer_indent_y() * 2) - (self.get_inner_indent_y() * (self.len_column - 1))
+        if available_height < 0:
+            available_height = 0
+        return available_height
+
+    def get_width(self):
+        if self.get_available_width():
+            return self.get_available_width() / self.len_line
+        else:
+            return 0
+
+    def get_height(self):
+        return self.get_available_height() / self.len_column
 
     def update(self):
         self.parent_class.blit(self.image, (self.x, self.y))
 
     def handle_collision(self):
         self.stoutness -= 1
+        self.parent_class.config['block_map'][self.map_y][self.map_x] = self.stoutness
         if not self.stoutness:
             self.kill()
         else:
