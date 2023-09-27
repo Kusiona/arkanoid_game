@@ -1,6 +1,6 @@
 from pygame.surface import Surface
 from pygame.event import Event
-from src.common.buttons import PlayButton, LevelsButton, ExitButton
+from src.common.buttons import PlayCompanyButton, LevelsButton, ExitButton
 from src.common.image import Animation
 from src.common.base.font import Font
 from src.common.base.events import EventHandlingMixin
@@ -51,7 +51,7 @@ class MainMenuInterface:
 
     def create_buttons(self):
         font_size = self.get_font_size(self.BUTTONS_FONT_COEFF)
-        self.play_button = PlayButton(
+        self.play_button = PlayCompanyButton(
             parent_class=self.parent_class,
             text_size=font_size
         )

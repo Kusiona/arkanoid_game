@@ -25,6 +25,8 @@ class Arkanoid:
         self.levels_config = None
         self.read_levels_config()
 
+        self.text_config = None
+        self.read_text_config()
         self.life_counter = 3
 
     def read_levels_config(self):
@@ -36,6 +38,10 @@ class Arkanoid:
             filename = self.levels_config[level_name]['background_image']
             self.levels_config[level_name]['background_image'] = Image(filename)
             self.levels_config[level_name]['background_image_thumb'] = Image(filename)
+
+    def read_text_config(self):
+        with open('text_config.json', 'r') as f:
+            self.text_config = json.loads(f.read())
 
     def track_buttons_presses(self, event):
         target_types = (

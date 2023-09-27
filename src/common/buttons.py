@@ -5,8 +5,17 @@ from src.common.base.button import TextButton, ImageButton
 from src.game_screens.level import Level
 
 
-class PlayButton(TextButton):
+class PlayCompanyButton(TextButton):
     text = 'PLAY COMPANY'
+
+    def handle_event(self, event):
+        if self.check_left_clicked(event):
+            from src.game_screens.play_company_menu import PlayCompanyMenu
+            self.parent_class.main_app_class.current_screen_class = PlayCompanyMenu
+
+
+class PlayButton(TextButton):
+    text = 'PLAY!'
 
     def handle_event(self, event):
         if self.check_left_clicked(event):
@@ -57,6 +66,8 @@ class ExitMenuButton(TextButton):
             self.parent_class.main_app_class.ball_offset_y = 0
             self.parent_class.main_app_class.ball_offset_x = 0
             self.parent_class.main_app_class.life_counter = 3
+            self.parent_class.main_app_class.levels_config = None
+            self.parent_class.main_app_class.read_levels_config()
             del self.parent_class.main_app_class.block_group
             del self.parent_class.main_app_class.ball_offset_x
             del self.parent_class.main_app_class.ball_offset_y

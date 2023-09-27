@@ -3,7 +3,7 @@ from src.common.base.image import Image
 from src.common.base.font import Font
 
 
-class PauseMenuInterface:
+class PauseInterface:
     TITLE_TEXT = 'PAUSE'
     TITLE_FONT_COEFF = 0.2
     BUTTONS_FONT_COEFF = 0.1
@@ -70,7 +70,7 @@ class PauseMenuInterface:
 
 
 class PauseMenu(Surface):
-    interface_class = PauseMenuInterface
+    interface_class = PauseInterface
 
     def __init__(self, main_app_class):
         super().__init__((main_app_class.WIDTH, main_app_class.HEIGHT))
