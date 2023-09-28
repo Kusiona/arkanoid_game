@@ -73,10 +73,10 @@ class Block(Sprite):
 
     def handle_collision(self):
         self.stoutness -= 1
-        self.parent_class.config['block_map'][self.map_y][self.map_x] = self.stoutness
         if not self.stoutness:
             self.kill()
         else:
+            self.parent_class.config['block_map'][self.map_y][self.map_x] = self.stoutness
             self.image = Image(
                 f'level_elements/{self.stoutness}_stoutness_block.jpg',
                 self, self.width,

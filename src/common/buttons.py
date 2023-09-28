@@ -19,7 +19,8 @@ class PlayButton(TextButton):
 
     def handle_event(self, event):
         if self.check_left_clicked(event):
-            pass
+            self.parent_class.main_app_class.company = True
+            self.parent_class.main_app_class.level_active = True
 
 
 class LevelsButton(TextButton):
@@ -53,6 +54,8 @@ class ContinueButton(TextButton):
 
     def handle_event(self, event):
         if self.check_left_clicked(event):
+            if self.parent_class.main_app_class.company:
+                self.parent_class.main_app_class.level_active = True
             from src.game_screens.level import Level
             self.parent_class.main_app_class.current_screen_class = Level
 
@@ -62,19 +65,7 @@ class ExitMenuButton(TextButton):
 
     def handle_event(self, event):
         if self.check_left_clicked(event):
-            self.parent_class.main_app_class.platform_offset = 0
-            self.parent_class.main_app_class.ball_offset_y = 0
-            self.parent_class.main_app_class.ball_offset_x = 0
-            self.parent_class.main_app_class.life_counter = 3
-            self.parent_class.main_app_class.levels_config = None
-            self.parent_class.main_app_class.read_levels_config()
-            del self.parent_class.main_app_class.block_group
-            del self.parent_class.main_app_class.ball_offset_x
-            del self.parent_class.main_app_class.ball_offset_y
-            del self.parent_class.main_app_class.speed_x
-            del self.parent_class.main_app_class.speed_y
-            if pygame.K_SPACE in self.parent_class.main_app_class.buttons_presses:
-                self.parent_class.main_app_class.buttons_presses.pop(pygame.K_SPACE)
+            self.parent_class.main_app_class.del_attr()
             from src.game_screens.levels_menu import LevelsMenu
             self.parent_class.main_app_class.current_screen_class = LevelsMenu
 
@@ -84,10 +75,9 @@ class AgainButton(TextButton):
 
     def handle_event(self, event):
         if self.check_left_clicked(event):
+            self.parent_class.main_app_class.del_attr()
             from src.game_screens.level import Level
             self.parent_class.main_app_class.current_screen_class = Level
-            self.parent_class.main_app_class.life_counter = 3
-            del self.parent_class.main_app_class.block_group
 
 
 class LevelButton(ImageButton):

@@ -3,6 +3,8 @@ import json
 import pygame
 from src.game_screens.main_menu import MainMenu
 from src.common.base.image import Image
+from src.game_screens.level import Level
+from src.game_screens.level_complete_menu import LevelCompleteMenu
 
 
 class Arkanoid:
@@ -27,7 +29,13 @@ class Arkanoid:
 
         self.text_config = None
         self.read_text_config()
+
         self.life_counter = 3
+
+        self.company = False
+        self.level_active = False
+        self.current_level_company = str(1)
+
 
     def read_levels_config(self):
         # возможно сделать отдельный класс LevelConfig
@@ -85,12 +93,48 @@ class Arkanoid:
 
             self.update_display()
 
+    def play_main_company(self):
+        self.current_level = self.current_level_company
+
+        if int(self.current_level) > 9:
+            self.current_screen_class = LevelCompleteMenu
+            self.company = False
+            self.level_active = False
+
+        if self.level_active:
+            self.current_screen_class = Level
+
+        if hasattr(self, 'block_group') and not self.block_group:
+            self.del_attr()
+
     def update_display(self) -> None:
         del self.current_screen
+
+        if self.company:
+            self.play_main_company()
+
         self.extra_event_handlers = []
         self.current_screen = self.current_screen_class(main_app_class=self)
         self.screen.blit(self.current_screen, (0, 0))
         pygame.display.update()
+
+    def del_attr(self):
+        self.platform_offset = 0
+        self.life_counter = 3
+        self.levels_config = None
+        self.read_levels_config()
+        del self.block_group
+        del self.ball_offset_x
+        del self.ball_offset_y
+        del self.speed_x
+        del self.speed_y
+
+        if pygame.K_SPACE in self.buttons_presses:
+            self.buttons_presses.pop(pygame.K_SPACE)
+
+        self.level_active = False
+        self.company = False
+
         # import sys
         # from src.game_screens.level import Ball, Platform, Block
         # print(f'{self.current_screen_class} references count', sys.getrefcount(self.current_screen_class))

@@ -55,7 +55,9 @@ class GameOverInterface:
             )
         x = (self.width / 2) - (self.again_button.width / 2)
         y = self.height / 2
-        self.again_button.render(x, y)
+
+        if not self.main_app_class.level_active:
+            self.again_button.render(x, y)
 
         self.exit_menu_button = ExitMenuButton(
             parent_class=self.parent_class,

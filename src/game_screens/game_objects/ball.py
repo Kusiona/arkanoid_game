@@ -66,6 +66,7 @@ class Ball(Sprite):
 
     def movement_ball(self):
         self.parent_class.check_collisions_ball()
+        self.check_attr()
         self.parent_class.main_app_class.ball_offset_x -= self.parent_class.main_app_class.speed_x
         self.parent_class.main_app_class.ball_offset_y -= self.parent_class.main_app_class.speed_y
 
