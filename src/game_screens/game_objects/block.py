@@ -3,8 +3,8 @@ from src.common.base.image import Image
 
 
 class Block(Sprite):
-    inner_indent_coeff = 0.01
-    outer_indent_coeff = 0.04
+    INNER_INDENT_COEFF = 0.01
+    OUTER_INDENT_COEFF = 0.04
 
     def __init__(self, parent_class, block,
                  coord_block_map, len_line, len_column,
@@ -34,16 +34,16 @@ class Block(Sprite):
         return x, y
 
     def get_outer_indent_x(self):
-        return self.parent_class_width * self.outer_indent_coeff
+        return self.parent_class_width * self.OUTER_INDENT_COEFF
 
     def get_outer_indent_y(self):
-        return self.parent_class_height * self.outer_indent_coeff
+        return self.parent_class_height * self.OUTER_INDENT_COEFF
 
     def get_inner_indent_x(self):
-        return self.parent_class_width * self.inner_indent_coeff
+        return self.parent_class_width * self.INNER_INDENT_COEFF
 
     def get_inner_indent_y(self):
-        return self.parent_class_height * self.inner_indent_coeff
+        return self.parent_class_height * self.INNER_INDENT_COEFF
 
     def get_available_width(self):
         available_width = self.parent_class_width - (

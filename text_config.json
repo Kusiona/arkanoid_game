@@ -1,10 +1,74 @@
 {
-    "1": "Space isn`t",
-    "2": "remote at all.",
-    "3": "It`s only an",
-    "4": "hour`s drive away",
-    "5": "if your car",
-    "6": "could go",
-    "7": "straight upwards.",
-    "8": "(Fred Hoyle)"
-  }
+    "main_menu": {
+        "title_text": "ARKANOID",
+        "title_font_coeff": 0.2,
+        "buttons_font_coeff": 0.1
+    },
+    "levels_menu": {
+        "filename": "level_menu_bg.jpg",
+        "title_text": "LEVELS",
+        "title_font_coeff": 0.9,
+        "buttons_font_coeff": 0.4,
+        "cards_block_padding_coeff": 0.15
+    },
+    "play_company_menu": {
+        "filename": "play_company_menu_bg.jpeg",
+        "title_text": {
+                        "1": "Space isn`t",
+                        "2": "remote at all.",
+                        "3": "It`s only an",
+                        "4": "hour`s drive away",
+                        "5": "if your car",
+                        "6": "could go",
+                        "7": "straight upwards.",
+                        "8": "(Fred Hoyle)"
+        },
+        "title_font_coeff": 0.06,
+        "buttons_font_coeff": 0.1
+    },
+    "level_complete_menu": {
+        "filename": "level_complete_menu_bg.jpg",
+        "title_text": "COMPLETED!",
+        "title_font_coeff": 0.13,
+        "buttons_font_coeff": 0.1
+    },
+    "pause_menu": {
+        "filename": "pause_menu_bg.jpg",
+        "title_text": "PAUSE",
+        "title_font_coeff": 0.2,
+        "buttons_font_coeff": 0.1
+    },
+    "game_over_menu": {
+        "filename": "game_over_menu_bg.jpg",
+        "title_text": "GAME OVER",
+        "title_font_coeff": 0.12,
+        "buttons_font_coeff": 0.08
+    },
+    "buttons": {
+        "play_company_button": "PLAY COMPANY",
+        "play_button": "PLAY!",
+        "levels_button": "CHOOSE LEVEL",
+        "exit_button": "EXIT",
+        "back_button": "BACK",
+        "continue_button": "CONTINUE",
+        "exit_menu_button": "EXIT TO MENU",
+        "again_button": "AGAIN"
+    },
+    "game_objects": {
+        "ball": {
+            "image_path": "level_elements/ball.png",
+            "size_coeff": 0.05,
+            "padding_coeff": 0.03
+        },
+        "platform": {
+            "image_path": "level_elements/platform.png",
+            "width_coeff": 0.25,
+            "height_coeff": 0.03,
+            "padding_coeff": 0.03
+        },
+        "block": {
+            "inner_indent_coeff": 0.01,
+            "outer_indent_coeff": 0.04
+        }
+    }
+}

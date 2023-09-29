@@ -7,7 +7,6 @@ from src.common.base.events import EventHandlingMixin
 
 
 class MainMenuInterface:
-    # дублирование с лвл меню интерфейсом, а теперь еще и с меню паузы, лол
     TITLE_TEXT = 'ARKANOID'
     TITLE_FONT_COEFF = 0.2
     BUTTONS_FONT_COEFF = 0.1

@@ -3,7 +3,7 @@ from pygame.surface import Surface
 from src.common.image import LevelCard
 from src.common.base.image import Image
 from src.common.base.font import Font
-from src.common.buttons import LevelsMenuBackButton, LevelButton
+from src.common.buttons import BackButton, LevelButton
 
 
 class InterfaceLevelCardsBlock:
@@ -79,8 +79,8 @@ class LevelMenuInterface:
     # текст учитывает только высоту, не учитывает ширину
 
     TITLE_TEXT = 'LEVELS'
-    TITLE_FONT_SIZE_COEFF = 0.9
-    BUTTONS_FONT_SIZE_COEFF = 0.4
+    TITLE_FONT_COEFF = 0.9
+    BUTTONS_FONT_COEFF = 0.4
     CARDS_BLOCK_PADDING_COEFF = 0.15
 
     def __init__(self, parent_class):
@@ -111,7 +111,7 @@ class LevelMenuInterface:
         return size
 
     def create_title(self):
-        font_size = self.get_font_size_by_coeff(self.TITLE_FONT_SIZE_COEFF)
+        font_size = self.get_font_size_by_coeff(self.TITLE_FONT_COEFF)
         font = Font(self.TITLE_TEXT, font_size)
         text_width, text_height = font.surface.get_width(), font.surface.get_height()
         x = (self.width - text_width) / 2
@@ -126,8 +126,8 @@ class LevelMenuInterface:
         self.parent_class.blit(font.surface, (x, y))
 
     def create_back_button(self):
-        text_size = self.get_font_size_by_coeff(self.BUTTONS_FONT_SIZE_COEFF)
-        back_button = LevelsMenuBackButton(
+        text_size = self.get_font_size_by_coeff(self.BUTTONS_FONT_COEFF)
+        back_button = BackButton(
             parent_class=self.parent_class,  text_size=text_size
         )
         x = (self.width / 2) - (back_button.width / 2)

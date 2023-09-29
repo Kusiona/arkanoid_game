@@ -40,7 +40,7 @@ class ExitButton(TextButton):
             post_event(Event(pygame.QUIT))
 
 
-class LevelsMenuBackButton(TextButton):
+class BackButton(TextButton):
     text = 'BACK'
 
     def handle_event(self, event):

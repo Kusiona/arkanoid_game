@@ -30,7 +30,7 @@ class PlayCompanyInterface:
 
     def create_paragraph(self):
         indentation = self.height * self.TITLE_FONT_COEFF
-        for line, phrase in self.main_app_class.text_config.items():
+        for line, phrase in self.main_app_class.text_config['play_company_menu']['title_text'].items():
             font_size = self.get_font_size(self.TITLE_FONT_COEFF)
             font = Font(phrase, font_size)
             text_width, text_height = font.surface.get_width(), font.surface.get_height()
@@ -47,7 +47,7 @@ class PlayCompanyInterface:
 
     def create_buttons(self):
         # to avoid circular imports
-        from src.common.buttons import LevelsMenuBackButton, PlayButton
+        from src.common.buttons import BackButton, PlayButton
 
         font_size = self.get_font_size(self.BUTTONS_FONT_COEFF)
         available_height = self.height / 2
@@ -60,7 +60,7 @@ class PlayCompanyInterface:
         y = available_height + font_size * 2.5
         self.play_button.render(x, y)
 
-        self.exit_menu_button = LevelsMenuBackButton(
+        self.exit_menu_button = BackButton(
             parent_class=self.parent_class,
             text_size=font_size
         )
