@@ -4,6 +4,7 @@ from src.common.image import LevelCard
 from src.common.base.image import Image
 from src.common.base.font import Font
 from src.common.buttons import BackButton, LevelButton
+from src.common.base.base_interface import BaseInterface
 
 
 class InterfaceLevelCardsBlock:
@@ -74,20 +75,10 @@ class InterfaceLevelCardsBlock:
         pass
 
 
-class LevelMenuInterface:
-    # продумать реиспользование методов принятие аргументов или работа полностью через self
-    # текст учитывает только высоту, не учитывает ширину
-
-    TITLE_TEXT = 'LEVELS'
-    TITLE_FONT_COEFF = 0.9
-    BUTTONS_FONT_COEFF = 0.4
-    CARDS_BLOCK_PADDING_COEFF = 0.15
+class LevelMenuInterface(BaseInterface):
 
     def __init__(self, parent_class):
-        self.parent_class = parent_class
-        self.main_app_class = parent_class.main_app_class
-        self.main_app_class.extra_event_handlers.append(self.handle_event)
-        self.width, self.height = self.parent_class.get_size()
+        super().__init__(parent_class)
         self.cards_block = None
         self.render()
 
@@ -95,7 +86,7 @@ class LevelMenuInterface:
         self.create_title()
         read_existed_cards = True if hasattr(self.main_app_class, 'levels_cards') else False
         self.create_levels_cards(read_existed_cards)
-        self.create_back_button()
+        self.create_button()
 
     def create_levels_cards(self, read_existed_cards=False):
         self.cards_block = InterfaceLevelCardsBlock(
@@ -111,8 +102,8 @@ class LevelMenuInterface:
         return size
 
     def create_title(self):
-        font_size = self.get_font_size_by_coeff(self.TITLE_FONT_COEFF)
-        font = Font(self.TITLE_TEXT, font_size)
+        font_size = self.get_font_size_by_coeff(self.parent_class.config['title_font_coeff'])
+        font = Font(self.parent_class.config['title_text'], font_size)
         text_width, text_height = font.surface.get_width(), font.surface.get_height()
         x = (self.width - text_width) / 2
         y = (self.get_cards_block_padding_height() / 2) - (text_height / 2)
@@ -125,8 +116,8 @@ class LevelMenuInterface:
         )
         self.parent_class.blit(font.surface, (x, y))
 
-    def create_back_button(self):
-        text_size = self.get_font_size_by_coeff(self.BUTTONS_FONT_COEFF)
+    def create_button(self):
+        text_size = self.get_font_size_by_coeff(self.parent_class.config['buttons_font_coeff'])
         back_button = BackButton(
             parent_class=self.parent_class,  text_size=text_size
         )
@@ -135,10 +126,10 @@ class LevelMenuInterface:
         back_button.render(x, y)
 
     def get_cards_block_padding_width(self):
-        return self.width * self.CARDS_BLOCK_PADDING_COEFF
+        return self.width * self.parent_class.config['cards_block_padding_coeff']
 
     def get_cards_block_padding_height(self):
-        return self.height * self.CARDS_BLOCK_PADDING_COEFF
+        return self.height * self.parent_class.config['cards_block_padding_coeff']
 
     def get_available_width(self):
         return self.width - self.get_cards_block_padding_width() * 2
@@ -153,13 +144,14 @@ class LevelMenuInterface:
 
 
 class LevelsMenu(Surface):
+    CONFIG_KEY = 'levels_menu'
     interface_class = LevelMenuInterface
-    # DYNAMIC = False
 
     def __init__(self, main_app_class):
         super().__init__((main_app_class.WIDTH, main_app_class.HEIGHT))
         self.main_app_class = main_app_class
         self.main_app_class.extra_event_handlers.append(self.handle_event)
+        self.config = self.main_app_class.config[self.CONFIG_KEY]
         self.render()
         self.interface = self.interface_class(parent_class=self)
 
@@ -169,7 +161,7 @@ class LevelsMenu(Surface):
     def render(self):
         background_exists = hasattr(self.main_app_class, 'background')
         background = self.main_app_class.background if background_exists else None
-        filename = 'level_menu_bg.jpg'
+        filename = self.config['filename']
         if not background_exists or background and not background.source_class == str(self):
             self.main_app_class.background = Image(
                 filename, source_class=str(self),
@@ -181,7 +173,6 @@ class LevelsMenu(Surface):
     def handle_event(self, event):
         if event.type == pygame.WINDOWRESIZED:
             self.main_app_class.background.scale(
-                # абсолютно не понятно почему я не могу взять собственные get_width get_height, выяснить
                 self.main_app_class.WIDTH, self.main_app_class.HEIGHT
             )
             self.set_background(self.main_app_class.background.image_surface)

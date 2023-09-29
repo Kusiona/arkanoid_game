@@ -19,16 +19,15 @@ class Arkanoid:
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.RESIZABLE)
         self.clock = pygame.time.Clock()
 
-        self.current_screen_class = MainMenu
-        self.current_screen = self.current_screen_class(self)
-
-        self.buttons_presses = {}
-
         self.levels_config = None
         self.read_levels_config()
 
-        self.text_config = None
-        self.read_text_config()
+        self.config = None
+        self.read_config()
+
+        self.current_screen_class = MainMenu
+        self.current_screen = self.current_screen_class(self)
+        self.buttons_presses = {}
 
         self.life_counter = 3
 
@@ -46,9 +45,9 @@ class Arkanoid:
             self.levels_config[level_name]['background_image'] = Image(filename)
             self.levels_config[level_name]['background_image_thumb'] = Image(filename)
 
-    def read_text_config(self):
-        with open('text_config.json', 'r') as f:
-            self.text_config = json.loads(f.read())
+    def read_config(self):
+        with open('config.json', 'r') as f:
+            self.config = json.loads(f.read())
 
     def track_buttons_presses(self, event):
         target_types = (

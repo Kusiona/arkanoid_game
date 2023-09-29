@@ -1,91 +1,50 @@
 from pygame.surface import Surface
-from pygame.event import Event
 from src.common.buttons import PlayCompanyButton, LevelsButton, ExitButton
 from src.common.image import Animation
-from src.common.base.font import Font
-from src.common.base.events import EventHandlingMixin
+from src.common.base.base_interface import BaseInterface
 
 
-class MainMenuInterface:
-    TITLE_TEXT = 'ARKANOID'
-    TITLE_FONT_COEFF = 0.2
-    BUTTONS_FONT_COEFF = 0.1
+class MainMenuInterface(BaseInterface):
 
     def __init__(self, parent_class):
-        self.parent_class = parent_class
-        self.main_app_class = parent_class.main_app_class
-        self.main_app_class.extra_event_handlers.append(self.handle_event)
-        self.width = parent_class.get_width()
-        self.height = parent_class.get_height()
-        self.play_button = None
-        self.levels_button = None
-        self.exit_button = None
-        self.render()
-
-    def render(self) -> None:
-        self.create_title()
-        self.create_buttons()
-
-    def get_font_size(self, coeff):
-        size = int(self.width * coeff)
-        if self.height < self.width:
-            size = int(self.height * coeff)
-
-        return size
-
-    def create_title(self):
-        font_size = self.get_font_size(self.TITLE_FONT_COEFF)
-        font = Font(self.TITLE_TEXT, font_size)
-        text_width, text_height = font.surface.get_width(), font.surface.get_height()
-        x = (self.width - text_width) / 2
-        y = (self.height / 3) - text_height
-        self.parent_class.blit(
-            font.shadow_surface,
-            (
-                font.get_shadow_x(x, font_size),
-                font.get_shadow_y(y, font_size),
-            )
-        )
-        self.parent_class.blit(font.surface, (x, y))
+        super().__init__(parent_class)
 
     def create_buttons(self):
-        font_size = self.get_font_size(self.BUTTONS_FONT_COEFF)
-        self.play_button = PlayCompanyButton(
+        font_size = self.get_font_size(self.parent_class.config['buttons_font_coeff'])
+        play_button = PlayCompanyButton(
             parent_class=self.parent_class,
             text_size=font_size
         )
-        x = (self.width / 2) - (self.play_button.width / 2)
+        x = (self.width / 2) - (play_button.width / 2)
         y = self.height / 2
-        self.play_button.render(x, y)
+        play_button.render(x, y)
 
-        self.levels_button = LevelsButton(
+        levels_button = LevelsButton(
             parent_class=self.parent_class,
             text_size=font_size
         )
-        x = (self.width / 2) - (self.levels_button.width / 2)
+        x = (self.width / 2) - (levels_button.width / 2)
         y += font_size * 2
-        self.levels_button.render(x, y)
+        levels_button.render(x, y)
 
-        self.exit_button = ExitButton(
+        exit_button = ExitButton(
             parent_class=self.parent_class,
             text_size=font_size
         )
-        x = (self.width / 2) - (self.exit_button.width / 2)
+        x = (self.width / 2) - (exit_button.width / 2)
         y += font_size * 2
-        self.exit_button.render(x, y)
-
-    def handle_event(self, event):
-        pass
+        exit_button.render(x, y)
 
 
 class MainMenu(Surface):
+    CONFIG_KEY = 'pause_menu'
     interface_class = MainMenuInterface
-    # DYNAMIC = True
 
     def __init__(self, main_app_class):
         super().__init__((main_app_class.WIDTH, main_app_class.HEIGHT))
         self.main_app_class = main_app_class
         self.main_app_class.extra_event_handlers.append(self.handle_event)
+        self.config = self.main_app_class.config[self.CONFIG_KEY]
         self.render()
         self.interface = self.interface_class(parent_class=self)
 
