@@ -36,7 +36,6 @@ class Arkanoid:
         self.level_active = False
         self.current_level_company = str(1)
 
-
     def read_levels_config(self):
         # возможно сделать отдельный класс LevelConfig
         with open('levels_config.json', 'r') as f:
@@ -119,21 +118,21 @@ class Arkanoid:
         pygame.display.update()
 
     def del_attr(self):
-        self.platform_offset = 0
         self.life_counter = 3
         self.levels_config = None
         self.read_levels_config()
-        del self.block_group
-        del self.ball_offset_x
-        del self.ball_offset_y
-        del self.speed_x
-        del self.speed_y
+        if hasattr(self, 'block_group'):
+            del self.block_group
+            del self.platform_offset
+            del self.ball_offset_x
+            del self.ball_offset_y
+            del self.speed_x
+            del self.speed_y
 
         if pygame.K_SPACE in self.buttons_presses:
             self.buttons_presses.pop(pygame.K_SPACE)
 
         self.level_active = False
-        self.company = False
 
         # import sys
         # from src.game_screens.level import Ball, Platform, Block

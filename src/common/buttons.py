@@ -66,6 +66,8 @@ class ExitMenuButton(TextButton):
     def handle_event(self, event):
         if self.check_left_clicked(event):
             self.parent_class.main_app_class.del_attr()
+            self.parent_class.main_app_class.current_level_company = str(1)
+            self.parent_class.main_app_class.company = False
             from src.game_screens.levels_menu import LevelsMenu
             self.parent_class.main_app_class.current_screen_class = LevelsMenu
 
