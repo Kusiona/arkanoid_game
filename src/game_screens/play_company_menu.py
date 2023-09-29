@@ -4,7 +4,7 @@ from src.common.base.font import Font
 
 
 class PlayCompanyInterface:
-    TITLE_FONT_COEFF = 0.08
+    TITLE_FONT_COEFF = 0.06
     BUTTONS_FONT_COEFF = 0.1
 
     def __init__(self, parent_class):
@@ -29,12 +29,13 @@ class PlayCompanyInterface:
         return size
 
     def create_paragraph(self):
+        indentation = self.height * self.TITLE_FONT_COEFF
         for line, phrase in self.main_app_class.text_config.items():
             font_size = self.get_font_size(self.TITLE_FONT_COEFF)
             font = Font(phrase, font_size)
             text_width, text_height = font.surface.get_width(), font.surface.get_height()
             x = (self.width - text_width) / 2
-            y = (self.height / 30) + text_height * int(''.join(line))
+            y = indentation * int(line)
             self.parent_class.blit(
                 font.shadow_surface,
                 (
@@ -49,13 +50,14 @@ class PlayCompanyInterface:
         from src.common.buttons import LevelsMenuBackButton, PlayButton
 
         font_size = self.get_font_size(self.BUTTONS_FONT_COEFF)
+        available_height = self.height / 2
 
         self.play_button = PlayButton(
             parent_class=self.parent_class,
             text_size=font_size
         )
         x = (self.width / 2) - (self.play_button.width / 2)
-        y = self.height - font_size * 2.5
+        y = available_height + font_size * 2.5
         self.play_button.render(x, y)
 
         self.exit_menu_button = LevelsMenuBackButton(
