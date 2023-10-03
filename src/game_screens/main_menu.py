@@ -1,6 +1,7 @@
 from pygame.surface import Surface
 from src.common.buttons import PlayCompanyButton, LevelsButton, ExitButton
 from src.common.image import Animation
+from src.common.base.font import Font
 from src.common.base.base_interface import BaseInterface
 
 
@@ -37,7 +38,8 @@ class MainMenuInterface(BaseInterface):
 
 
 class MainMenu(Surface):
-    CONFIG_KEY = 'pause_menu'
+    # почему BaseMenu Animation выдает ошибку при переклчении на другой экран
+    CONFIG_KEY = 'main_menu'
     interface_class = MainMenuInterface
 
     def __init__(self, main_app_class):

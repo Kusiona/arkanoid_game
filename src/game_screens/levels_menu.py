@@ -1,10 +1,9 @@
 import pygame
-from pygame.surface import Surface
 from src.common.image import LevelCard
-from src.common.base.image import Image
 from src.common.base.font import Font
 from src.common.buttons import BackButton, LevelButton
 from src.common.base.base_interface import BaseInterface
+from src.common.base.base_menu import BaseMenu
 
 
 class InterfaceLevelCardsBlock:
@@ -143,32 +142,12 @@ class LevelMenuInterface(BaseInterface):
             self.create_levels_cards()
 
 
-class LevelsMenu(Surface):
+class LevelsMenu(BaseMenu):
     CONFIG_KEY = 'levels_menu'
     interface_class = LevelMenuInterface
 
     def __init__(self, main_app_class):
-        super().__init__((main_app_class.WIDTH, main_app_class.HEIGHT))
-        self.main_app_class = main_app_class
-        self.main_app_class.extra_event_handlers.append(self.handle_event)
-        self.config = self.main_app_class.config[self.CONFIG_KEY]
-        self.render()
-        self.interface = self.interface_class(parent_class=self)
-
-    def set_background(self, image):
-        self.blit(image, (0, 0))
-
-    def render(self):
-        background_exists = hasattr(self.main_app_class, 'background')
-        background = self.main_app_class.background if background_exists else None
-        filename = self.config['filename']
-        if not background_exists or background and not background.source_class == str(self):
-            self.main_app_class.background = Image(
-                filename, source_class=str(self),
-                width=self.get_width(), height=self.get_height()
-            )
-
-        self.set_background(self.main_app_class.background.image_surface)
+        super().__init__(main_app_class)
 
     def handle_event(self, event):
         if event.type == pygame.WINDOWRESIZED:
@@ -176,9 +155,6 @@ class LevelsMenu(Surface):
                 self.main_app_class.WIDTH, self.main_app_class.HEIGHT
             )
             self.set_background(self.main_app_class.background.image_surface)
-
-    def __str__(self):
-        return 'LevelsMenu'
 
     def __del__(self):
         if hasattr(self.main_app_class, 'levels_cards'):
