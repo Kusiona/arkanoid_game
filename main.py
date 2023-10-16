@@ -21,7 +21,7 @@ class Arkanoid:
         pygame.display.set_caption(self.config[self.CONFIG_KEY]['caption'])
         pygame.display.set_icon(pygame.image.load(self.config[self.CONFIG_KEY]['image_path']))
         pygame.mixer.music.load(self.config[self.CONFIG_KEY]['music_path'])
-        pygame.mixer.music.play(1)
+        pygame.mixer.music.play(-1)
 
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.RESIZABLE)
         self.clock = pygame.time.Clock()
