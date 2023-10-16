@@ -7,5 +7,5 @@ class EventHandlingMixin:
                 main_app_class = arg.main_app_class
         main_app_class.extra_event_handlers.append(self.handle_event)
 
-    def handle_event(self, event):
+    def handle_event(self, event) -> None:
         pass

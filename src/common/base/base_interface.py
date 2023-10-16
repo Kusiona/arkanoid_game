@@ -10,20 +10,19 @@ class BaseInterface:
         self.height = parent_class.get_height()
         self.render()
 
-    def render(self):
+    def render(self) -> None:
         self.create_title()
         self.create_buttons()
 
-    def get_font_size(self, coeff):
+    def get_font_size(self, coeff) -> int:
         size = int(self.width * coeff)
         if self.height < self.width:
             size = int(self.height * coeff)
-
         return size
 
-    def create_title(self):
+    def create_title(self) -> None:
         font_size = self.get_font_size(self.parent_class.config['title_font_coeff'])
-        font = Font(self.parent_class.config['title_text'], font_size)
+        font = Font(self.main_app_class, self.parent_class.config['title_text'], font_size)
         text_width, text_height = font.surface.get_width(), font.surface.get_height()
         x = (self.width - text_width) / 2
         y = (self.height / 3) - text_height
@@ -36,8 +35,8 @@ class BaseInterface:
         )
         self.parent_class.blit(font.surface, (x, y))
 
-    def create_buttons(self):
+    def create_buttons(self) -> None:
         pass
 
-    def handle_event(self, event):
+    def handle_event(self, event) -> None:
         pass

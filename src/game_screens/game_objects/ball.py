@@ -18,7 +18,10 @@ class Ball(Sprite):
         self.height = self.parent_class_height * self.config['size_coeff']
         self.platform = self.parent_class.main_app_class.platform
         self.parent_class.main_app_class.extra_event_handlers.append(self.handle_event)
-        self.image = Image(self.config['image_path'], self, self.width, self.height).image_surface
+        self.image = Image(
+            self.main_app_class, self.config['image_path'],
+            self, self.width, self.height
+        ).image_surface
         self.speed = speed
         self.padding = (self.parent_class_height * self.config['padding_coeff'])
         self.check_attr()

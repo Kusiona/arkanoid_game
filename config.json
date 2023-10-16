@@ -2,7 +2,10 @@
     "main": {
         "caption": "Arkanoid",
         "image_path": "static/images/game_window_icon.png",
-        "music_path": "static/music/background_music.mp3"
+        "music_path": "static/music/background_music.mp3",
+        "width": 700,
+        "height": 800,
+        "fps": 30
     },
     "main_menu": {
         "title_text": "ARKANOID",
@@ -16,17 +19,29 @@
         "buttons_font_coeff": 0.4,
         "cards_block_padding_coeff": 0.15
     },
+    "level_interface": {
+        "count_font_size_coeff": 9
+    },
+    "level_cards_block": {
+        "cards_cols": 3,
+        "cards_rows": 3,
+        "cards_padding_coeff": 0.01
+    },
+    "level_card":{
+        "frame_color": [128, 0, 128],
+        "margin_coeff": 0.05
+    },
     "play_company_menu": {
         "filename": "play_company_menu_bg.jpeg",
         "title_text": {
-                        "1": "Space isn`t",
-                        "2": "remote at all.",
-                        "3": "It`s only an",
-                        "4": "hour`s drive away",
-                        "5": "if your car",
-                        "6": "could go",
-                        "7": "straight upwards.",
-                        "8": "(Fred Hoyle)"
+            "1": "Space isn`t",
+            "2": "remote at all.",
+            "3": "It`s only an",
+            "4": "hour`s drive away",
+            "5": "if your car",
+            "6": "could go",
+            "7": "straight upwards.",
+            "8": "(Fred Hoyle)"
         },
         "title_font_coeff": 0.06,
         "buttons_font_coeff": 0.1
@@ -50,6 +65,7 @@
         "buttons_font_coeff": 0.08
     },
     "buttons": {
+        "base_button": "BaseButton",
         "play_company_button": "PLAY COMPANY",
         "play_button": "PLAY!",
         "levels_button": "CHOOSE LEVEL",
@@ -76,5 +92,20 @@
             "inner_indent_coeff": 0.01,
             "outer_indent_coeff": 0.04
         }
+    },
+
+    "font": {
+        "font_path": "static/fonts/InvasionBold.ttf",
+        "color": [128, 0, 128],
+        "shadow_color": [25, 25, 112],
+        "shadow_offset_coeff": 0.04
+    },
+    "animation": {
+        "time_interval": 0.25,
+        "animation_delay": 150,
+        "frames_file_format": "gif"
+    },
+    "image": {
+        "images_directory": "static/images/"
     }
 }

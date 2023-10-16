@@ -23,7 +23,10 @@ class Platform(Sprite):
 
         self.x, self.y = self.get_coordinates()
 
-        self.image = Image(self.config['image_path'], self, self.width, self.height).image_surface
+        self.image = Image(
+            self.main_app_class, self.config['image_path'],
+            self, self.width, self.height
+        ).image_surface
         self.rect = self.image.get_rect(topleft=(self.x, self.y))
 
         self.parent_class.main_app_class.platform = self

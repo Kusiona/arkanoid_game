@@ -6,53 +6,53 @@ from src.game_screens.level import Level
 
 
 class PlayCompanyButton(TextButton):
-    text = 'PLAY COMPANY'
+    CONFIG_KEY = 'play_company_button'
 
-    def handle_event(self, event):
+    def handle_event(self, event) -> None:
         if self.check_left_clicked(event):
             from src.game_screens.play_company_menu import PlayCompanyMenu
             self.parent_class.main_app_class.current_screen_class = PlayCompanyMenu
 
 
 class PlayButton(TextButton):
-    text = 'PLAY!'
+    CONFIG_KEY = 'play_button'
 
-    def handle_event(self, event):
+    def handle_event(self, event) -> None:
         if self.check_left_clicked(event):
             self.parent_class.main_app_class.company = True
             self.parent_class.main_app_class.level_active = True
 
 
 class LevelsButton(TextButton):
-    text = 'CHOOSE LEVEL'
+    CONFIG_KEY = 'levels_button'
 
-    def handle_event(self, event):
+    def handle_event(self, event) -> None:
         if self.check_left_clicked(event):
             from src.game_screens.levels_menu import LevelsMenu
             self.parent_class.main_app_class.current_screen_class = LevelsMenu
 
 
 class ExitButton(TextButton):
-    text = 'EXIT'
+    CONFIG_KEY = 'exit_button'
 
-    def handle_event(self, event):
+    def handle_event(self, event) -> None:
         if self.check_left_clicked(event):
             post_event(Event(pygame.QUIT))
 
 
 class BackButton(TextButton):
-    text = 'BACK'
+    CONFIG_KEY = 'back_button'
 
-    def handle_event(self, event):
+    def handle_event(self, event) -> None:
         if self.check_left_clicked(event):
             from src.game_screens.main_menu import MainMenu
             self.parent_class.main_app_class.current_screen_class = MainMenu
 
 
 class ContinueButton(TextButton):
-    text = 'CONTINUE'
+    CONFIG_KEY = 'continue_button'
 
-    def handle_event(self, event):
+    def handle_event(self, event) -> None:
         if self.check_left_clicked(event):
             if self.parent_class.main_app_class.company:
                 self.parent_class.main_app_class.level_active = True
@@ -61,9 +61,9 @@ class ContinueButton(TextButton):
 
 
 class ExitMenuButton(TextButton):
-    text = 'EXIT TO MENU'
+    CONFIG_KEY = 'exit_menu_button'
 
-    def handle_event(self, event):
+    def handle_event(self, event) -> None:
         if self.check_left_clicked(event):
             self.parent_class.main_app_class.del_attr()
             self.parent_class.main_app_class.current_level_company = str(1)
@@ -73,9 +73,9 @@ class ExitMenuButton(TextButton):
 
 
 class AgainButton(TextButton):
-    text = 'AGAIN'
+    CONFIG_KEY = 'again_button'
 
-    def handle_event(self, event):
+    def handle_event(self, event) -> None:
         if self.check_left_clicked(event):
             self.parent_class.main_app_class.del_attr()
             from src.game_screens.level import Level
@@ -87,7 +87,7 @@ class LevelButton(ImageButton):
         super().__init__(parent_class, image)
         self.level_name = level_name
 
-    def handle_event(self, event):
+    def handle_event(self, event) -> None:
         if pygame.K_SPACE in self.parent_class.main_app_class.buttons_presses:
             self.parent_class.main_app_class.buttons_presses.pop(pygame.K_SPACE)
         if self.check_left_clicked(event):

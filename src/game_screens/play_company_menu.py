@@ -12,7 +12,7 @@ class PlayCompanyInterface(BaseInterface):
         indentation = self.height * self.parent_class.config['title_font_coeff']
         for line, phrase in self.parent_class.config['title_text'].items():
             font_size = self.get_font_size(self.parent_class.config['title_font_coeff'])
-            font = Font(phrase, font_size)
+            font = Font(self.main_app_class, phrase, font_size)
             text_width, text_height = font.surface.get_width(), font.surface.get_height()
             x = (self.width - text_width) / 2
             y = indentation * int(line)

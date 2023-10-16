@@ -22,8 +22,10 @@ class Block(Sprite):
         self.len_column = len_column
         self.width = self.get_width()
         self.height = self.get_height()
-
-        self.image = Image(self.block['image_path'], self, self.width, self.height).image_surface
+        self.image = Image(
+            self.main_app_class, self.block['image_path'],
+            self, self.width, self.height
+        ).image_surface
         self.x, self.y = self.get_coordinates()
         self.rect = self.image.get_rect(topleft=(self.x, self.y))
 
@@ -77,6 +79,7 @@ class Block(Sprite):
             self.kill()
         else:
             self.image = Image(
+                self.main_app_class,
                 f'level_elements/{self.stoutness}_stoutness_block.jpg',
                 self, self.width,
                 self.height

@@ -13,7 +13,7 @@ import random
 
 
 class LevelInterface(Sprite):
-    COUNT_FONT_SIZE_COEFF = 9
+    CONFIG_KEY = 'level_interface'
 
     def __init__(self, parent_class):
         super().__init__()
@@ -27,19 +27,20 @@ class LevelInterface(Sprite):
         self.rect = self.image.image_surface.get_rect()
         self.platform = None
         self.ball = None
-        self.config = self.parent_class.config
-        self.block_config = self.config['block']
+        self.config = self.parent_class.main_app_class.config[self.CONFIG_KEY]
+        self.level_config = self.parent_class.config
+        self.block_config = self.level_config['block']
         self.create()
 
     def create_platform(self):
-        self.platform = Platform(self.parent_class, self.config['platform_speed'])
+        self.platform = Platform(self.parent_class, self.level_config['platform_speed'])
 
     def create_ball(self):
-        self.ball = Ball(parent_class=self.parent_class, speed=self.config['ball_speed'])
+        self.ball = Ball(parent_class=self.parent_class, speed=self.level_config['ball_speed'])
 
     def create_block_map(self):
-        len_column = len(self.config['block_map'])
-        for y, block_line in enumerate(self.config['block_map']):
+        len_column = len(self.level_config['block_map'])
+        for y, block_line in enumerate(self.level_config['block_map']):
             len_line = len(block_line)
             for x, map_icon in enumerate(block_line):
                 if map_icon:
@@ -75,8 +76,12 @@ class LevelInterface(Sprite):
         return size
 
     def update_life_counter(self):
-        font_size = self.get_font_size(self.COUNT_FONT_SIZE_COEFF)
-        font = Font(str(self.parent_class.main_app_class.life_counter), font_size)
+        font_size = self.get_font_size(self.config['count_font_size_coeff'])
+        font = Font(
+            self.parent_class.main_app_class,
+            str(self.parent_class.main_app_class.life_counter),
+            font_size
+        )
         text_width, text_height = font.surface.get_width(), font.surface.get_height()
         x = self.width - text_width * 2
         y = self.height - text_height
@@ -112,10 +117,9 @@ class LevelInterface(Sprite):
 
 class Level(Surface):
     interface_class = LevelInterface
-    # DYNAMIC = True
 
     def __init__(self, main_app_class):
-        super().__init__((main_app_class.WIDTH, main_app_class.HEIGHT))
+        super().__init__((main_app_class.width, main_app_class.height))
         self.main_app_class = main_app_class
         self.main_app_class.extra_event_handlers.append(self.handle_event)
         self.level_name = self.main_app_class.current_level
@@ -128,7 +132,7 @@ class Level(Surface):
 
     def render(self):
         bg_image = self.config['background_image']
-        screen_size = self.main_app_class.WIDTH, self.main_app_class.HEIGHT
+        screen_size = self.main_app_class.width, self.main_app_class.height
         if (bg_image.width, bg_image.height) != screen_size:
             bg_image.scale(*screen_size)
         self.set_background(bg_image.image_surface)
@@ -142,7 +146,9 @@ class Level(Surface):
     def check_level_complete(self):
         if not self.main_app_class.block_group:
             if self.main_app_class.company:
-                self.main_app_class.current_level_company = str(int(self.main_app_class.current_level_company) + 1)
+                self.main_app_class.current_level_company = str(
+                    int(self.main_app_class.current_level_company
+                        ) + 1)
             else:
                 self.main_app_class.current_screen_class = LevelCompleteMenu
 
@@ -162,11 +168,11 @@ class Level(Surface):
         if self.interface.ball.y - self.main_app_class.speed_y <= 0:
             self.interface.ball.change_direction_y()
         elif self.interface.ball.x + (
-                self.interface.ball.width - self.main_app_class.speed_x) >= self.main_app_class.WIDTH:
+                self.interface.ball.width - self.main_app_class.speed_x) >= self.main_app_class.width:
             self.interface.ball.change_direction_x()
         elif self.interface.ball.x - self.main_app_class.speed_x <= 0:
             self.interface.ball.change_direction_x()
-        elif self.interface.ball.y + self.interface.ball.height >= self.main_app_class.HEIGHT:
+        elif self.interface.ball.y + self.interface.ball.height >= self.main_app_class.height:
             self.restart()
 
     def check_collisions_ball_platform(self):

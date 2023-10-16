@@ -9,9 +9,6 @@ from src.game_screens.level_complete_menu import LevelCompleteMenu
 
 class Arkanoid:
     CONFIG_KEY = 'main'
-    WIDTH = 700
-    HEIGHT = 800
-    FPS = 30
     extra_event_handlers = []
 
     def __init__(self):
@@ -23,7 +20,11 @@ class Arkanoid:
         pygame.mixer.music.load(self.config[self.CONFIG_KEY]['music_path'])
         pygame.mixer.music.play(-1)
 
-        self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.RESIZABLE)
+        self.width = self.config[self.CONFIG_KEY]['width']
+        self.height = self.config[self.CONFIG_KEY]['height']
+        self.fps = self.config[self.CONFIG_KEY]['fps']
+
+        self.screen = pygame.display.set_mode((self.width, self.height), pygame.RESIZABLE)
         self.clock = pygame.time.Clock()
 
         self.levels_config = None
@@ -37,7 +38,7 @@ class Arkanoid:
 
         self.company = False
         self.level_active = False
-        self.current_level_company = str(1)
+        self.current_level_company = '1'
 
     def read_levels_config(self):
         with open('levels_config.json', 'r') as f:
@@ -45,8 +46,8 @@ class Arkanoid:
 
         for level_name, config in self.levels_config.items():
             filename = self.levels_config[level_name]['background_image']
-            self.levels_config[level_name]['background_image'] = Image(filename)
-            self.levels_config[level_name]['background_image_thumb'] = Image(filename)
+            self.levels_config[level_name]['background_image'] = Image(self, filename)
+            self.levels_config[level_name]['background_image_thumb'] = Image(self, filename)
 
     def read_config(self):
         with open('config.json', 'r') as f:
@@ -76,14 +77,9 @@ class Arkanoid:
         self.track_buttons_presses(event)
 
         if event.type == pygame.WINDOWRESIZED:
-            self.WIDTH = event.x
-            self.HEIGHT = event.y
+            self.width = event.x
+            self.height = event.y
 
-        # подумать как сделать обработку ивентов производительно
-        # проверить и узнать удаляются ли у нас все обьекты, не копятся ли за каждый кадр
-        # сделать так чтобы каждый класс записывал не только ивент хендлер главному классу но и ивент матчер
-        # в цикле мы не будем итерировать все ивенты и давать всему приложению доступ к каждому ивенту поскольку это очень хуево для производительности
-        # в цикле мы будем итерироватьсяч по ивент матчером и если матчится, то давать исполнится соответствующему ивент хендлеру
         for event_handler in self.extra_event_handlers:
             event_handler(event)
 
@@ -123,6 +119,7 @@ class Arkanoid:
         self.life_counter = 3
         self.levels_config = None
         self.read_levels_config()
+
         if hasattr(self, 'block_group'):
             del self.block_group
             del self.platform_offset
@@ -136,38 +133,7 @@ class Arkanoid:
 
         self.level_active = False
 
-        # import sys
-        # from src.game_screens.level import Ball, Platform, Block
-        # print(f'{self.current_screen_class} references count', sys.getrefcount(self.current_screen_class))
-        # print('Ball references count', sys.getrefcount(Ball))
-        # print('Platform references count', sys.getrefcount(Platform))
-        # print('Block references count', sys.getrefcount(Block))
 
-"""
-посмотреть дает ли такой подход какие-то бонусы
-if event.type == VIDEORESIZE:
-    screen = pygame.display.set_mode(event.size, HWSURFACE|DOUBLEBUF|RESIZABLE)
-    
-и вот такой подход через сингл груп и дроу
-block = pygame.sprite.Sprite()
-block.image = pygame.transform.scale(img, (64, 64))
-block.rect = block.image.get_rect()
-
-group = pygame.sprite.GroupSingle(block)
-
-while True:
-    #TODO: event handling
-    group.draw(screen)
-    pygame.display.update()
-
-
-подумать как обеспечить возможность блитать классы обертки напрямую а не обращаясь к их атрибутам для этого
-
-узнать даст ли нам какие то бонусы трансформ smoothscale
-
-продумать общий стиль названий и использования методов render и create
-
-"""
 if __name__ == '__main__':
     pygame.init()
     Arkanoid().run_game_loop()

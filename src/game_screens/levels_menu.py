@@ -7,15 +7,14 @@ from src.common.base.base_menu import BaseMenu
 
 
 class InterfaceLevelCardsBlock:
-    CARDS_COLS = 3
-    CARDS_ROWS = 3
-    CARDS_PADDING_COEFF = 0.01
+    CONFIG_KEY = 'level_cards_block'
 
     def __init__(self, interface, parent_class, read_existed=False):
         self.parent_class = parent_class
         self.parent_class.main_app_class.extra_event_handlers.append(self.handle_event)
         self.interface = interface
         self.width, self.height = self.parent_class.get_size()
+        self.config = self.parent_class.main_app_class.config[self.CONFIG_KEY]
         if read_existed:
             self.place_cards()
         else:
@@ -28,10 +27,10 @@ class InterfaceLevelCardsBlock:
             card.render(card.image.x, card.image.y)
 
     def get_cards_padding_width(self):
-        return self.width * self.CARDS_PADDING_COEFF
+        return self.width * self.config['cards_padding_coeff']
 
     def get_cards_padding_height(self):
-        return self.height * self.CARDS_PADDING_COEFF
+        return self.height * self.config['cards_padding_coeff']
 
     def get_card_size(self):
         available_width = self.interface.get_available_width()
@@ -39,14 +38,12 @@ class InterfaceLevelCardsBlock:
         cards_padding_width = self.get_cards_padding_width()
         cards_padding_height = self.get_cards_padding_height()
 
-        width = (available_width - cards_padding_width) / self.CARDS_COLS
-        height = (available_height - cards_padding_height) / self.CARDS_ROWS
+        width = (available_width - cards_padding_width) / self.config['cards_cols']
+        height = (available_height - cards_padding_height) / self.config['cards_rows']
 
         return width, height
 
     def create_levels_cards(self):
-        # нет учета self.CARDS_ROWS
-        # в будущем сделать пролистывание уровней, если их больше чем влезает в указанные столбцы и строки
         cards = []
         x = self.interface.get_cards_block_padding_width()
         y = self.interface.get_cards_block_padding_height()
@@ -54,7 +51,9 @@ class InterfaceLevelCardsBlock:
         levels_config = self.parent_class.main_app_class.levels_config
         col_index = 1
         for level_name in levels_config:
-            card = LevelCard(levels_config[level_name]['background_image_thumb'], *card_size, x, y)
+            card = LevelCard(self.parent_class.main_app_class,
+                             levels_config[level_name]['background_image_thumb'],
+                             *card_size, x, y)
             level_card_button = LevelButton(
                     self.parent_class, card, level_name
                 )
@@ -62,7 +61,7 @@ class InterfaceLevelCardsBlock:
             cards.append(level_card_button)
             x += card_size[0] + self.get_cards_padding_width()
 
-            if col_index % self.CARDS_COLS == 0:
+            if col_index % self.config['cards_cols'] == 0:
                 x = self.interface.get_cards_block_padding_width()
                 y += card_size[1] + self.get_cards_padding_height()
 
@@ -102,7 +101,7 @@ class LevelMenuInterface(BaseInterface):
 
     def create_title(self):
         font_size = self.get_font_size_by_coeff(self.parent_class.config['title_font_coeff'])
-        font = Font(self.parent_class.config['title_text'], font_size)
+        font = Font(self.main_app_class, self.parent_class.config['title_text'], font_size)
         text_width, text_height = font.surface.get_width(), font.surface.get_height()
         x = (self.width - text_width) / 2
         y = (self.get_cards_block_padding_height() / 2) - (text_height / 2)
