@@ -1,3 +1,4 @@
+import pygame
 from pygame.sprite import Sprite
 from src.common.base.image import Image
 
@@ -76,6 +77,7 @@ class Block(Sprite):
         self.stoutness -= 1
         self.parent_class.config['block_map'][self.map_y][self.map_x] = self.stoutness
         if not self.stoutness:
+            pygame.mixer.Sound.play(pygame.mixer.Sound(self.config['sound_path']))
             self.kill()
         else:
             self.image = Image(
