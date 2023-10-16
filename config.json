@@ -63,7 +63,8 @@
         "ball": {
             "image_path": "level_elements/ball.png",
             "size_coeff": 0.05,
-            "padding_coeff": 0.03
+            "padding_coeff": 0.03,
+            "sound_path": "static/music/ball_sound.mp3"
         },
         "platform": {
             "image_path": "level_elements/platform.png",

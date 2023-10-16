@@ -5,9 +5,7 @@ import random
 
 
 class Ball(Sprite):
-    IMAGE_PATH = 'level_elements/ball.png'
-    SIZE_COEFF = 0.05
-    PADDING_COEFF = 0.03
+    CONFIG_KEY = 'ball'
 
     def __init__(self, parent_class, speed):
         super().__init__()
@@ -15,13 +13,14 @@ class Ball(Sprite):
         self.main_app_class = parent_class.main_app_class
         self.parent_class_width = parent_class.get_width()
         self.parent_class_height = parent_class.get_height()
-        self.width = self.parent_class_width * self.SIZE_COEFF
-        self.height = self.parent_class_height * self.SIZE_COEFF
+        self.config = self.main_app_class.config['game_objects'][self.CONFIG_KEY]
+        self.width = self.parent_class_width * self.config['size_coeff']
+        self.height = self.parent_class_height * self.config['size_coeff']
         self.platform = self.parent_class.main_app_class.platform
         self.parent_class.main_app_class.extra_event_handlers.append(self.handle_event)
-        self.image = Image(self.IMAGE_PATH, self, self.width, self.height).image_surface
+        self.image = Image(self.config['image_path'], self, self.width, self.height).image_surface
         self.speed = speed
-        self.padding = (self.parent_class_height * self.PADDING_COEFF)
+        self.padding = (self.parent_class_height * self.config['padding_coeff'])
         self.check_attr()
         self.x, self.y = self.get_coordinates()
         self.rect = self.image.get_rect(topleft=(self.x, self.y))
@@ -88,7 +87,7 @@ class Ball(Sprite):
         self.parent_class.main_app_class.speed_y *= -1
 
     def play_sound(self):
-        pygame.mixer.Sound.play(pygame.mixer.Sound('static/music/ball_sound.mp3'))
+        pygame.mixer.Sound.play(pygame.mixer.Sound(self.config['sound_path']))
 
     def handle_event(self, event):
         pass

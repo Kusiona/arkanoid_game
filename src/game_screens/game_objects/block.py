@@ -3,8 +3,7 @@ from src.common.base.image import Image
 
 
 class Block(Sprite):
-    INNER_INDENT_COEFF = 0.01
-    OUTER_INDENT_COEFF = 0.04
+    CONFIG_KEY = 'block'
 
     def __init__(self, parent_class, block,
                  coord_block_map, len_line, len_column,
@@ -15,7 +14,7 @@ class Block(Sprite):
         self.parent_class_width = parent_class_width
         self.parent_class_height = parent_class_height
         self.parent_class.main_app_class.extra_event_handlers.append(self.handle_event)
-
+        self.config = self.main_app_class.config['game_objects'][self.CONFIG_KEY]
         self.block = block
         self.stoutness = self.block['stoutness']
         self.map_x, self.map_y = coord_block_map
@@ -34,16 +33,16 @@ class Block(Sprite):
         return x, y
 
     def get_outer_indent_x(self):
-        return self.parent_class_width * self.OUTER_INDENT_COEFF
+        return self.parent_class_width * self.config['outer_indent_coeff']
 
     def get_outer_indent_y(self):
-        return self.parent_class_height * self.OUTER_INDENT_COEFF
+        return self.parent_class_height * self.config['outer_indent_coeff']
 
     def get_inner_indent_x(self):
-        return self.parent_class_width * self.INNER_INDENT_COEFF
+        return self.parent_class_width * self.config['inner_indent_coeff']
 
     def get_inner_indent_y(self):
-        return self.parent_class_height * self.INNER_INDENT_COEFF
+        return self.parent_class_height * self.config['inner_indent_coeff']
 
     def get_available_width(self):
         available_width = self.parent_class_width - (
