@@ -1,4 +1,8 @@
 {
+    "main": {
+        "caption": "Arkanoid",
+        "image_path": "static/images/game_window_icon.png"
+    },
     "main_menu": {
         "title_text": "ARKANOID",
         "title_font_coeff": 0.2,

@@ -8,22 +8,23 @@ from src.game_screens.level_complete_menu import LevelCompleteMenu
 
 
 class Arkanoid:
+    CONFIG_KEY = 'main'
     WIDTH = 700
     HEIGHT = 800
     FPS = 30
     extra_event_handlers = []
 
     def __init__(self):
-        pygame.display.set_caption('Arkanoid') # можно ли вынести, глаза режет. в остальном проекте все вынесено
-        pygame.display.set_icon(pygame.image.load('static/images/game_window_icon.png')) # можно ли вынести, глаза режет. в остальном проекте все вынесено
+        self.config = None
+        self.read_config()
+
+        pygame.display.set_caption(self.config[self.CONFIG_KEY]['caption'])
+        pygame.display.set_icon(pygame.image.load(self.config[self.CONFIG_KEY]['image_path']))
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.RESIZABLE)
         self.clock = pygame.time.Clock()
 
         self.levels_config = None
         self.read_levels_config()
-
-        self.config = None
-        self.read_config()
 
         self.current_screen_class = MainMenu
         self.current_screen = self.current_screen_class(self)
