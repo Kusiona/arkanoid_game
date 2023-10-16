@@ -80,10 +80,15 @@ class Ball(Sprite):
         self.parent_class.main_app_class.ball_offset_y -= self.parent_class.main_app_class.speed_y
 
     def change_direction_x(self):
+        self.play_sound()
         self.parent_class.main_app_class.speed_x *= -1
 
     def change_direction_y(self):
+        self.play_sound()
         self.parent_class.main_app_class.speed_y *= -1
+
+    def play_sound(self):
+        pygame.mixer.Sound.play(pygame.mixer.Sound('static/music/ball_sound.mp3'))
 
     def handle_event(self, event):
         pass
