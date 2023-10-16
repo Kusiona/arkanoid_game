@@ -155,8 +155,8 @@ class Level(Surface):
 
     def check_collisions_ball(self):
         self.check_collisions_ball_wall()
-        self.check_collisions_ball_platform()
         self.check_collisions_ball_block()
+        return self.check_collisions_ball_platform()
 
     def check_collisions_ball_wall(self):
         if self.interface.ball.y - self.main_app_class.speed_y <= 0:
@@ -170,8 +170,20 @@ class Level(Surface):
             self.restart()
 
     def check_collisions_ball_platform(self):
+        if pygame.Rect.collidepoint(self.interface.ball.rect, self.interface.platform.rect.topleft) or \
+                pygame.Rect.collidepoint(self.interface.ball.rect, self.interface.platform.rect.topright):
+            self.interface.ball.change_direction_y()
+            return True
+
+        if pygame.Rect.collidepoint(self.interface.ball.rect, self.interface.platform.rect.bottomleft) or \
+                pygame.Rect.collidepoint(self.interface.ball.rect, self.interface.platform.rect.bottomright):
+            self.interface.ball.change_direction_y()
+            return True
+
         if self.interface.ball.rect.colliderect(self.interface.platform.rect):
             self.interface.ball.change_direction_y()
+            return True
+        return False
 
     def check_collisions_ball_block(self):
         block_collision = pygame.sprite.spritecollideany(

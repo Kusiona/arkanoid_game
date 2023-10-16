@@ -65,7 +65,16 @@ class Ball(Sprite):
             self.parent_class.main_app_class.speed_x *= -1
 
     def movement_ball(self):
-        self.parent_class.check_collisions_ball()
+        collision = self.parent_class.check_collisions_ball()
+
+        if self.main_app_class.buttons_presses.get(pygame.K_LEFT) and collision and\
+                self.parent_class.main_app_class.speed_x < 0:
+            self.change_direction_x()
+
+        if self.main_app_class.buttons_presses.get(pygame.K_RIGHT) and collision and\
+                self.parent_class.main_app_class.speed_x > 0:
+            self.change_direction_x()
+
         self.check_attr()
         self.parent_class.main_app_class.ball_offset_x -= self.parent_class.main_app_class.speed_x
         self.parent_class.main_app_class.ball_offset_y -= self.parent_class.main_app_class.speed_y

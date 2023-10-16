@@ -36,7 +36,6 @@ class Arkanoid:
         self.current_level_company = str(1)
 
     def read_levels_config(self):
-        # возможно сделать отдельный класс LevelConfig
         with open('levels_config.json', 'r') as f:
             self.levels_config = json.loads(f.read())
 
@@ -140,13 +139,6 @@ class Arkanoid:
         # print('Platform references count', sys.getrefcount(Platform))
         # print('Block references count', sys.getrefcount(Block))
 
-# возможно сделать флаг для текущего экрана dynamic
-# и сделать соотвествующий рендеринг для статичных и динамических экранов,
-# чтобы не инициализировать без необходимости статичные экраны
-
-# изменить везде где можно ресайз или пересоздание класса на  pygame.transform.scale
-
-# возможно развить идею с обработкой удаления класса
 """
 посмотреть дает ли такой подход какие-то бонусы
 if event.type == VIDEORESIZE:
