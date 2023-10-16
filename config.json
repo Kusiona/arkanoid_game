@@ -1,7 +1,8 @@
 {
     "main": {
         "caption": "Arkanoid",
-        "image_path": "static/images/game_window_icon.png"
+        "image_path": "static/images/game_window_icon.png",
+        "music_path": "static/music/background_music.mp3"
     },
     "main_menu": {
         "title_text": "ARKANOID",
